@@ -36,6 +36,25 @@
 
     <hr>
 
+    @if(session('success'))
+        <div>
+            <strong>✅ Success: {{ session('success') }}</strong>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div>
+            <strong>⚠️ Errors:</strong>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <hr>
+
     <section>
         <fieldset>
             <legend>🔍 Find Resources</legend>
@@ -73,10 +92,8 @@
             <p>No resources found matching your search.</p>
         @else
             <div>
-                
                 @foreach($resources as $resource)
                 <div>
-                    
                     <div>
                         [🖼️ Image of {{ $resource->name }}]
                     </div>
@@ -109,7 +126,7 @@
                                     Reserve Now
                                 </button>
                             @else
-                                <button type="button">
+                                <button type="button" onclick="alert('Please select a Start and End date in the search bar first!')">
                                     Select Dates Above
                                 </button>
                             @endif
@@ -121,7 +138,7 @@
                     @endauth
 
                 </div>
-                @endforeach
+                <br> @endforeach
 
             </div>
         @endif

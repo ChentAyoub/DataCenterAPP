@@ -7,6 +7,7 @@ use App\Http\Controllers\ReservationController;
 use App\Models\Resource;
 
 
+
 Route::get('/', function (Illuminate\Http\Request $request) {
 
     $query = Resource::with('category');
@@ -36,5 +37,6 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
 });
