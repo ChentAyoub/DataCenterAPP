@@ -12,9 +12,9 @@
             <h1>DataCenter.io</h1>
             
             @auth
-                <details style="display:inline-block;">
-                    <summary style="cursor: pointer;">🔔 Notifications</summary>
-                    <ul style="position: absolute; background: white; border: 1px solid black; padding: 10px; list-style: none;">
+                <details>
+                    <summary>🔔 Notifications</summary>
+                    <ul>
                         <li>✅ Reservation confirmed: Dell Server</li>
                         <li>⚠️ Maintenance alert: Network Switch</li>
                     </ul>
@@ -23,9 +23,9 @@
                 | <b>Hello, {{ Auth::user()->name }}</b>
                 | <a href="{{ route('dashboard') }}">My Dashboard</a>
                 | 
-                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                <form action="{{ route('logout') }}" method="POST">
                     @csrf 
-                    <button type="submit" style="cursor: pointer;">Logout</button>
+                    <button>Logout</button>
                 </form>
             @else
                 <a href="{{ route('login') }}">Login</a> | 
@@ -37,30 +37,24 @@
     <hr>
 
     <section>
-        <fieldset style="border-radius: 10px; padding: 15px; border: 1px solid #ccc;">
-            <legend style="padding: 0 10px; font-weight: bold; color: #ff385c;">🔍 Find Resources</legend>
+        <fieldset>
+            <legend>🔍 Find Resources</legend>
             
-            <form action="/" method="GET" style="display: flex; align-items: flex-end; gap: 15px; flex-wrap: wrap;">
+            <form action="/" method="GET">
                 
-                <div style="flex: 1;">
-                    <label style="display: block; font-size: 0.8rem; font-weight: bold;">Keyword (Name, CPU, RAM)</label>
-                    <input type="text" name="search" placeholder="e.g. Dell, 64GB, Cisco..." 
-                           value="{{ request('search') }}"
-                           style="width: 100%; padding: 8px;">
+                <div>
+                    <label>Keyword (Name, CPU, RAM)</label>
+                    <input type="text" name="search" placeholder="e.g. Dell, 64GB, Cisco..." value="{{ request('search') }}">
                 </div>
                 
                 <div>
-                    <label style="display: block; font-size: 0.8rem; font-weight: bold;">From</label>
-                    <input type="datetime-local" name="start_date" 
-                           value="{{ request('start_date') }}"
-                           style="padding: 8px;">
+                    <label>From</label>
+                    <input type="datetime-local" name="start_date" value="{{ request('start_date') }}">
                 </div>
                 
                 <div>
-                    <label style="display: block; font-size: 0.8rem; font-weight: bold;">To</label>
-                    <input type="datetime-local" name="end_date" 
-                           value="{{ request('end_date') }}"
-                           style="padding: 8px;">
+                    <label>To</label>
+                    <input type="datetime-local" name="end_date" value="{{ request('end_date') }}">
                 </div>
 
                 <button type="submit">
@@ -78,27 +72,27 @@
         @if($resources->isEmpty())
             <p>No resources found matching your search.</p>
         @else
-            <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+            <div>
                 
                 @foreach($resources as $resource)
-                <div style="border: 1px solid #ccc; padding: 15px; width: 300px; border-radius: 8px;">
+                <div>
                     
-                    <div style="background: #eee; height: 150px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                    <div>
                         [🖼️ Image of {{ $resource->name }}]
                     </div>
 
-                    <h3 style="margin: 5px 0;">{{ $resource->name }}</h3>
-                    <p style="margin: 5px 0; color: #555;">{{ $resource->category->name }}</p>
+                    <h3>{{ $resource->name }}</h3>
+                    <p>{{ $resource->category->name }}</p>
                     
-                    <p style="font-size: 0.9rem; color: #777;">
+                    <p>
                         ⚙️ {{ $resource->specifications ?? 'Standard Specs' }}
                     </p>
 
                     <p>
                         @if($resource->state == 'available') 
-                            <span style="color: green; font-weight: bold;">● Available</span>
+                            <span>● Available</span>
                         @else 
-                            <span style="color: red; font-weight: bold;">● Maintenance</span>
+                            <span>● Maintenance</span>
                         @endif
                     </p>
 
@@ -111,18 +105,18 @@
                             <input type="hidden" name="end_time" value="{{ request('end_date') }}">
 
                             @if(request('start_date') && request('end_date'))
-                                <button type="submit" style="width: 100%; padding: 10px; background: #ff385c; color: white; border: none; cursor: pointer;">
+                                <button type="submit">
                                     Reserve Now
                                 </button>
                             @else
-                                <button type="button" onclick="alert('Please select a Start and End date in the top search bar first!')" style="width: 100%; padding: 10px; background: #ddd; border: none; cursor: pointer;">
+                                <button type="button">
                                     Select Dates Above
                                 </button>
                             @endif
                         </form>
                     @else
-                        <a href="{{ route('login') }}" style="text-decoration: none;">
-                            <button style="width: 100%; padding: 10px; cursor: pointer;">Login to Book</button>
+                        <a href="{{ route('login') }}">
+                            <button>Login to Book</button>
                         </a>
                     @endauth
 
