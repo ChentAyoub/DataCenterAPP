@@ -126,7 +126,7 @@
                                     Reserve Now
                                 </button>
                             @else
-                                <button type="button" onclick="alert('Please select a Start and End date in the search bar first!')">
+                                <button type="button">
                                     Select Dates Above
                                 </button>
                             @endif
