@@ -14,7 +14,7 @@ return new class extends Migration
         $table->string('name');
         $table->foreignId('category_id')->constrained()->onDelete('cascade');
         $table->foreignId('manager_id')->constrained('users'); // The tech manager
-        $table->json('specifications')->nullable();
+        $table->text('specifications')->nullable();
         $table->enum('state', ['available', 'maintenance', 'out_of_order'])->default('available');
         $table->timestamps();
     });
