@@ -21,7 +21,15 @@
                 </details>
 
                 | <b>Hello, {{ Auth::user()->name }}</b>
-                | <a href="{{ route('dashboard') }}">My Dashboard</a>
+
+                @if(Auth::user()->role === 'admin')
+                    | <a href="{{ route('dashboard') }}">🔧 Admin Panel</a>
+                @elseif(Auth::user()->role === 'manager')
+                    | <a href="{{ route('dashboard') }}">⚡ Manager Dashboard</a>
+                @else
+                    | <a href="{{ route('dashboard') }}">📅 My Reservations</a>
+                @endif
+                
                 | 
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf 
@@ -60,7 +68,6 @@
             <legend>🔍 Find Resources</legend>
             
             <form action="/" method="GET">
-                
                 <div>
                     <label>Keyword (Name, CPU, RAM)</label>
                     <input type="text" name="search" placeholder="e.g. Dell, 64GB, Cisco..." value="{{ request('search') }}">
@@ -76,9 +83,7 @@
                     <input type="datetime-local" name="end_date" value="{{ request('end_date') }}">
                 </div>
 
-                <button type="submit">
-                    Search
-                </button>
+                <button type="submit">Search</button>
             </form>
         </fieldset>
     </section>
@@ -94,12 +99,13 @@
             <div>
                 @foreach($resources as $resource)
                 <div>
+                    
                     <div>
                         [🖼️ Image of {{ $resource->name }}]
                     </div>
 
                     <h3>{{ $resource->name }}</h3>
-                    <p>{{ $resource->category->name }}</p>
+                    <p><b>Category:</b> {{ $resource->category->name }}</p>
                     
                     <p>
                         ⚙️ {{ $resource->specifications ?? 'Standard Specs' }}
@@ -107,30 +113,72 @@
 
                     <p>
                         @if($resource->state == 'available') 
-                            <span>● Available</span>
+                            <span style="color: green;">● Available</span>
                         @else 
-                            <span>● Maintenance</span>
+                            <span style="color: red;">● Maintenance (Broken)</span>
                         @endif
                     </p>
 
                     @auth
-                        <form action="{{ route('reservation.store') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="resource_id" value="{{ $resource->id }}">
-                            
-                            <input type="hidden" name="start_time" value="{{ request('start_date') }}">
-                            <input type="hidden" name="end_time" value="{{ request('end_date') }}">
-
-                            @if(request('start_date') && request('end_date'))
+                        
+                        @if(Auth::user()->role === 'admin')
+                            <form action="{{ route('resource.destroy', $resource->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                @csrf
+                                @method('DELETE')
                                 <button type="submit">
-                                    Reserve Now
+                                    🗑️ Delete Resource
                                 </button>
-                            @else
-                                <button type="button">
-                                    Select Dates Above
-                                </button>
-                            @endif
-                        </form>
+                            </form>
+
+                        @elseif(Auth::user()->role === 'manager')
+                            <div>
+        
+                                 <a href="">
+                                     <button type="button">
+                                         ✏️ Edit
+                                     </button>
+                                 </a>
+
+                                <form action="{{ route('resource.toggle', $resource->id) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+
+                                    @if($resource->state == 'available')
+                                        <button type="submit">
+                                            ⚠️ Set Maintenance
+                                        </button>
+                                    @else
+                                        <button type="submit">
+                                            ✅ Set Available
+                                        </button>
+                                    @endif
+                                </form>
+                            </div>
+
+                        @else
+                            <form action="{{ route('reservation.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="resource_id" value="{{ $resource->id }}">
+                                
+                                <input type="hidden" name="start_time" value="{{ request('start_date') }}">
+                                <input type="hidden" name="end_time" value="{{ request('end_date') }}">
+
+                                @if($resource->state == 'maintenance')
+                                    <button type="button" disabled>
+                                        ⛔ Under Maintenance
+                                    </button>
+                                @elseif(request('start_date') && request('end_date'))
+                                    <button type="submit">
+                                        Reserve Now
+                                    </button>
+                                @else
+                                    <button type="button">
+                                        Select Dates Above
+                                    </button>
+                                @endif
+                            </form>
+                        @endif
+
                     @else
                         <a href="{{ route('login') }}">
                             <button>Login to Book</button>
@@ -138,7 +186,7 @@
                     @endauth
 
                 </div>
-                <br> @endforeach
+                @endforeach
 
             </div>
         @endif

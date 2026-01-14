@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController; 
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ResourceController;
 use App\Models\Resource;
 
 
@@ -39,4 +40,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
+    Route::patch('/resource/{id}/toggle', [ResourceController::class, 'toggleMaintenance'])->name('resource.toggle');
+    Route::delete('/resource/{id}', [ResourceController::class, 'destroy'])->name('resource.destroy');
 });
