@@ -65,7 +65,7 @@
 
     <section>
         <fieldset>
-            <legend>🔍 Find Resources</legend>
+            <legend> Find Resources</legend>
             
             <form action="/" method="GET">
                 <div>
@@ -106,7 +106,6 @@
 
                     <h3>{{ $resource->name }}</h3>
                     <p><b>Category:</b> {{ $resource->category->name }}</p>
-                    
                     <p>
                         ⚙️ {{ $resource->specifications ?? 'Standard Specs' }}
                     </p>
@@ -122,6 +121,12 @@
                     @auth
                         
                         @if(Auth::user()->role === 'admin')
+
+                            <a href=""> <!-- href for the edit page in the dashboard TODO -->
+                                <button type="submit">
+                                     Edit 
+                                </button>
+                            </a>
                             <form action="{{ route('resource.destroy', $resource->id) }}" method="POST" onsubmit="return confirm('Are you sure?');">
                                 @csrf
                                 @method('DELETE')
@@ -130,12 +135,13 @@
                                 </button>
                             </form>
 
+
                         @elseif(Auth::user()->role === 'manager')
                             <div>
         
                                  <a href="">
                                      <button type="button">
-                                         ✏️ Edit
+                                          Edit
                                      </button>
                                  </a>
 
@@ -145,11 +151,11 @@
 
                                     @if($resource->state == 'available')
                                         <button type="submit">
-                                            ⚠️ Set Maintenance
+                                             Set Maintenance
                                         </button>
                                     @else
                                         <button type="submit">
-                                            ✅ Set Available
+                                             Set Available
                                         </button>
                                     @endif
                                 </form>
@@ -159,13 +165,12 @@
                             <form action="{{ route('reservation.store') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="resource_id" value="{{ $resource->id }}">
-                                
                                 <input type="hidden" name="start_time" value="{{ request('start_date') }}">
                                 <input type="hidden" name="end_time" value="{{ request('end_date') }}">
 
                                 @if($resource->state == 'maintenance')
                                     <button type="button" disabled>
-                                        ⛔ Under Maintenance
+                                         Under Maintenance
                                     </button>
                                 @elseif(request('start_date') && request('end_date'))
                                     <button type="submit">
