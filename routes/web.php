@@ -13,7 +13,7 @@ use App\Models\Resource;
 Route::get('/', function (Request $request) {
     $categories = Category::all();
     $query = Resource::with('category');
-    
+
     if ($request->filled('search')) {
         $term = $request->search;
         
@@ -48,4 +48,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
     Route::patch('/resource/{id}/toggle', [ResourceController::class, 'toggleMaintenance'])->name('resource.toggle');
     Route::delete('/resource/{id}', [ResourceController::class, 'destroy'])->name('resource.destroy');
+    Route::get('/resource/{id}', [ResourceController::class, 'show'])->name('resource.show');
 });

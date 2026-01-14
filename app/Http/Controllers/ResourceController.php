@@ -41,4 +41,11 @@ class ResourceController extends Controller
 
         return back()->with('success', 'Resource deleted permanently.');
     }
+
+    public function show($id)
+    {
+        $resource = Resource::findOrFail($id);
+        return view('resources.show', compact('resource'));
+    }
+
 }
