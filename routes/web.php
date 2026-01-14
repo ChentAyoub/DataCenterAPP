@@ -5,14 +5,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController; 
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ResourceController;
+use App\Models\Category;
 use App\Models\Resource;
 
 
 
-Route::get('/', function (Illuminate\Http\Request $request) {
-
+Route::get('/', function (Request $request) {
+    $categories = Category::all();
     $query = Resource::with('category');
-
+    
     if ($request->filled('search')) {
         $term = $request->search;
         
@@ -24,8 +25,13 @@ Route::get('/', function (Illuminate\Http\Request $request) {
               });
         });
     }
+
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->category_id);
+    }
     return view('welcome', [
-        'resources' => $query->get()
+        'resources' => $query->get(),
+        'categories' => $categories 
     ]);
 
 })->name('home');
