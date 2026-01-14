@@ -2,59 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Data Center</title>
 </head>
-<body>
+<body class="auth-body">
 
-    <header>
-        <nav>
-            <a href="/">Back to Home</a>
+    <header class="auth-header">
+        <nav class="auth-nav">
+            <a href="/" class="link-back">⬅ Back to Home</a>
         </nav>
     </header>
 
-    <hr>
-
-    <main>
-        <h2>Create an Account</h2>
+    <main class="auth-container">
         
-        <form action="{{ route('register') }}" method="POST">
-            @csrf <div>
-                <label for="name">Full Name:</label><br>
-                <input type="text" id="name" name="name" required value="{{ old('name') }}">
-                @error('name') 
-                    <div style="color:red;">{{ $message }}</div> 
-                @enderror
+        <div class="auth-card">
+            <h2 class="auth-title">Create an Account</h2>
+            
+            <form action="{{ route('register') }}" method="POST" class="auth-form">
+                @csrf 
+                
+                <div class="form-group">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" id="name" name="name" class="form-control" required value="{{ old('name') }}" placeholder="John Doe">
+                    @error('name') 
+                        <div class="error-message">{{ $message }}</div> 
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" required value="{{ old('email') }}" placeholder="student@university.com">
+                    @error('email') 
+                        <div class="error-message">{{ $message }}</div> 
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required placeholder="••••••••">
+                    @error('password') 
+                        <div class="error-message">{{ $message }}</div> 
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="password_confirmation" class="form-label">Confirm Password</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn-primary btn-full">Register</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="{{ route('login') }}" class="link-primary">Login here</a>.</p>
             </div>
-            <br>
+        </div>
 
-            <div>
-                <label for="email">Email Address:</label><br>
-                <input type="email" id="email" name="email" required value="{{ old('email') }}">
-                @error('email') 
-                    <div style="color:red;">{{ $message }}</div> 
-                @enderror
-            </div>
-            <br>
-
-            <div>
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password" required>
-                @error('password') 
-                    <div style="color:red;">{{ $message }}</div> 
-                @enderror
-            </div>
-            <br>
-
-            <div>
-                <label for="password_confirmation">Confirm Password:</label><br>
-                <input type="password" id="password_confirmation" name="password_confirmation" required>
-            </div>
-            <br>
-
-            <button type="submit">Register</button>
-        </form>
-
-        <p>Already have an account? <a href="{{ route('login') }}">Login here</a>.</p>
     </main>
 
 </body>
