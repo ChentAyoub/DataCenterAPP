@@ -219,7 +219,7 @@
                             <div class="resource-card">
                                 
                                 <div class="card-icon">
-                                    @if($categoryName == 'Server') 🖥️
+                                    @if($categoryName == 'Server') 🖥️<!-- for testing-->
                                     @elseif($categoryName == 'Router') 📡
                                     @elseif($categoryName == 'Switch') 🔌
                                     @else 📦 @endif
