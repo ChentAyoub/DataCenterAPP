@@ -51,4 +51,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/resource/{id}', [ResourceController::class, 'show'])->name('resource.show');
     Route::delete('/reservation/{id}', [App\Http\Controllers\ReservationController::class, 'destroy'])->name('reservation.destroy');
     Route::get('/my-reservations', [App\Http\Controllers\ReservationController::class, 'myReservations'])->name('reservations.my_list');
+    Route::get('/resources/manage', [App\Http\Controllers\ResourceController::class, 'manage'])->name('resources.manage');
+    Route::get('/resources/create', [App\Http\Controllers\ResourceController::class, 'create'])->name('resources.create');
+    Route::post('/resources', [App\Http\Controllers\ResourceController::class, 'store'])->name('resources.store');
+    Route::get('/resources/{id}/edit', [App\Http\Controllers\ResourceController::class, 'edit'])->name('resources.edit');
+    Route::put('/resources/{id}', [App\Http\Controllers\ResourceController::class, 'update'])->name('resources.update');
+    Route::delete('/resources/{id}', [App\Http\Controllers\ResourceController::class, 'destroy'])->name('resources.destroy');
+    Route::patch('/reservation/{id}/approve', [App\Http\Controllers\ReservationController::class, 'approve'])->name('reservation.approve');
+    Route::patch('/reservation/{id}/reject', [App\Http\Controllers\ReservationController::class, 'reject'])->name('reservation.reject');
+    Route::patch('/resources/{id}/toggle', [App\Http\Controllers\ResourceController::class, 'toggleMaintenance'])->name('resources.toggle');
 });

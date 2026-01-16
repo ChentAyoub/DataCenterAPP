@@ -76,4 +76,27 @@ class ReservationController extends Controller
         $reservation->delete();
         return back()->with('success', 'Reservation cancelled successfully.');
     }
+    
+
+    public function approve($id)
+    {
+        if(auth()->user()->role === 'student') {
+            abort(403, 'Unauthorized action.');
+        }
+        $reservation = Reservation::findOrFail($id);
+        $reservation->update(['status' => 'approved']);
+
+        return back()->with('success', 'Reservation approved successfully! ✅');
+    }
+
+    public function reject($id)
+    {
+        if(auth()->user()->role === 'student') {
+            abort(403, 'Unauthorized action.');
+        }
+        $reservation = Reservation::findOrFail($id);
+        $reservation->update(['status' => 'rejected']);
+
+        return back()->with('success', 'Reservation rejected. ❌');
+    }
 }

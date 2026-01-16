@@ -11,33 +11,23 @@ use App\Models\User;
 class DashboardController extends Controller
 {
     public function index()
-    {
-        $user = Auth::user();
-
-        if ($user->role === 'student' || $user->role === 'internal_user') {
-            return redirect()->route('reservations.my_list');
-        }
-
-        if ($user->role === 'manager') {
-            $pending_count = Reservation::where('status', 'pending')->count();
-            $active_count = Reservation::where('status', 'approved')->count();
-            $total_resources = Resource::count();
-
-            $recent_reservations = Reservation::with(['user', 'resource'])
-                                            ->orderBy('created_at', 'desc')
-                                            ->take(5)
-                                            ->get();
-            
-            return view('dashboard.manager', compact(
-                'pending_count', 
-                'active_count', 
-                'total_resources',
-                'recent_reservations'
-            ));
-        }
-        if ($user->role === 'admin') {
-            return view('dashboard.admin');
-        }
-        return redirect('/');
+{
+    $user = Auth::user();
+    if ($user->role === 'student') {
+        return redirect()->route('reservations.my_list');
     }
+    $pending_reservations = \App\Models\Reservation::where('status', 'pending')
+        ->with(['user', 'resource'])
+        ->orderBy('created_at', 'asc')
+        ->get();
+    $broken_resources = \App\Models\Resource::where('state', 'maintenance')->get();
+    $active_count = \App\Models\Reservation::where('status', 'approved')
+        ->where('end_time', '>', now())
+        ->count();
+    return view('dashboard.manager', compact(
+        'pending_reservations', 
+        'broken_resources', 
+        'active_count'
+    ));
+}
 }
