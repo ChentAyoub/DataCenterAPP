@@ -49,4 +49,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/resource/{id}/toggle', [ResourceController::class, 'toggleMaintenance'])->name('resource.toggle');
     Route::delete('/resource/{id}', [ResourceController::class, 'destroy'])->name('resource.destroy');
     Route::get('/resource/{id}', [ResourceController::class, 'show'])->name('resource.show');
+    Route::delete('/reservation/{id}', [App\Http\Controllers\ReservationController::class, 'destroy'])->name('reservation.destroy');
+    Route::get('/my-reservations', [App\Http\Controllers\ReservationController::class, 'myReservations'])->name('reservations.my_list');
 });

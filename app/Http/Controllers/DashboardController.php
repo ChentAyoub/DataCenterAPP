@@ -14,39 +14,30 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // 1. If user is ADMIN: Show EVERYTHING
-        if ($user->role === 'admin') {
-            $stats = [
-                'users' => User::count(),
-                'resources' => Resource::count(),
-                'reservations' => Reservation::count(),
-            ];
-            return view('dashboard.admin', compact('stats'));
+        if ($user->role === 'student' || $user->role === 'internal_user') {
+            return redirect()->route('reservations.my_list');
         }
 
-        // 2. If user is MANAGER: Show resources they manage & pending requests
         if ($user->role === 'manager') {
-            $myResources = Resource::where('manager_id', $user->id)->get();
-            // Get reservations for MY resources only
-            $pendingReservations = Reservation::whereIn('resource_id', $myResources->pluck('id'))
-                                            ->where('status', 'pending')
-                                            ->with('user', 'resource')
+            $pending_count = Reservation::where('status', 'pending')->count();
+            $active_count = Reservation::where('status', 'approved')->count();
+            $total_resources = Resource::count();
+
+            $recent_reservations = Reservation::with(['user', 'resource'])
+                                            ->orderBy('created_at', 'desc')
+                                            ->take(5)
                                             ->get();
             
-            return view('dashboard.manager', compact('myResources', 'pendingReservations'));
+            return view('dashboard.manager', compact(
+                'pending_count', 
+                'active_count', 
+                'total_resources',
+                'recent_reservations'
+            ));
         }
-
-        // 3. If user is user : Show their own reservations
-        if ($user->role === 'internal_user') {
-            $myReservations = Reservation::where('user_id', $user->id)
-                                         ->with('resource')
-                                         ->orderBy('created_at', 'desc')
-                                         ->get();
-
-            return view('dashboard.user', compact('myReservations'));
+        if ($user->role === 'admin') {
+            return view('dashboard.admin');
         }
-
-        // Default fallback (should not reach here)
         return redirect('/');
     }
 }

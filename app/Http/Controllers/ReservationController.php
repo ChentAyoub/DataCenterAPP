@@ -46,4 +46,25 @@ class ReservationController extends Controller
 
         return back()->with('success', 'Reservation marked as ' . $request->status);
     }
+
+    public function myReservations()
+    {
+        $reservations = \App\Models\Reservation::where('user_id', auth()->id())
+            ->with('resource')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('reservations.my_list', compact('reservations'));
+    }
+
+
+    public function destroy($id)
+    {
+        $reservation = \App\Models\Reservation::findOrFail($id);
+        if ($reservation->user_id != auth()->id() && auth()->user()->role != 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+        $reservation->delete();
+        return redirect()->back()->with('success', 'Reservation cancelled successfully.');
+    }
 }

@@ -57,7 +57,6 @@
                 <p>Already have an account? <a href="{{ route('login') }}" class="link-primary">Login here</a>.</p>
             </div>
         </div>
-
     </main>
 
 </body>
