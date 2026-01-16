@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Reservations</title>
-
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
 
@@ -24,7 +24,26 @@
 
     <div class="main-content" style="margin-top: 40px;">
         
-        <h2 class="page-title">My Reservations</h2>
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <h2 class="page-title" style="margin: 0;">📅 My Reservations</h2>
+
+            <form action="{{ route('reservations.my_list') }}" method="GET" class="mini-search">
+                
+                <select name="status" class="search-select" onchange="this.form.submit()">
+                    <option value="all">All Statuses</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>⏳ Pending</option>
+                    <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>✅ Approved</option>
+                    <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>❌ Rejected</option>
+                </select>
+
+                <input type="text" name="search" placeholder="Search resource..." value="{{ request('search') }}">
+                <button type="submit">🔍</button>
+
+                @if(request('search') || (request('status') && request('status') !== 'all'))
+                    <a href="{{ route('reservations.my_list') }}" class="clear-search" title="Clear Filters">✖</a>
+                @endif
+            </form>
+        </div>
 
         @if(session('success'))
             <div class="alert alert-success">
@@ -33,12 +52,21 @@
         @endif
 
         @if($reservations->isEmpty())
+            
             <div class="empty-state">
-                <p>You haven't booked anything yet.</p>
-                <a href="/">
-                    <button class="btn-primary">Browse Resources</button>
-                </a>
+                @if(request('search') || request('status'))
+                    <p>🚫 No reservations found matching your filters.</p>
+                    <a href="{{ route('reservations.my_list') }}">
+                        <button class="btn-secondary">Clear All Filters</button>
+                    </a>
+                @else
+                    <p>You haven't booked anything yet.</p>
+                    <a href="/">
+                        <button class="btn-primary">Browse Resources</button>
+                    </a>
+                @endif
             </div>
+
         @else
             <div class="table-container">
                 <table class="data-table">
@@ -74,8 +102,7 @@
                             <td>
                                 @if($res->status == 'pending')
                                     <form action="{{ route('reservation.destroy', $res->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel this?');">
-                                        @csrf
-                                        @method('DELETE')
+                                        @csrf @method('DELETE')
                                         <button class="btn-danger-sm">Cancel</button>
                                     </form>
                                 @else

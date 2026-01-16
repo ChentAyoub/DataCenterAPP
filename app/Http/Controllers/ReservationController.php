@@ -47,24 +47,33 @@ class ReservationController extends Controller
         return back()->with('success', 'Reservation marked as ' . $request->status);
     }
 
-    public function myReservations()
+    public function myReservations(Request $request)
     {
-        $reservations = \App\Models\Reservation::where('user_id', auth()->id())
-            ->with('resource')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $query = Reservation::where('user_id', auth()->id())->with('resource');
 
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('resource', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+        $reservations = $query->orderBy('created_at', 'desc')->get();
         return view('reservations.my_list', compact('reservations'));
+
     }
 
 
-    public function destroy($id)
+   public function destroy($id)
     {
-        $reservation = \App\Models\Reservation::findOrFail($id);
-        if ($reservation->user_id != auth()->id() && auth()->user()->role != 'admin') {
+        $reservation = Reservation::findOrFail($id);
+        if ($reservation->user_id != Auth::id() && Auth::user()->role === 'student') {
             abort(403, 'Unauthorized action.');
         }
         $reservation->delete();
-        return redirect()->back()->with('success', 'Reservation cancelled successfully.');
+        return back()->with('success', 'Reservation cancelled successfully.');
     }
 }
