@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Resource;
-use App\Models\Category; // ✅ Added for dropdowns
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage; // ✅ Added for image deletion
+use Illuminate\Support\Facades\Storage;
 
 class ResourceController extends Controller
 {
@@ -104,10 +104,10 @@ class ResourceController extends Controller
 
         if ($resource->state === 'available') {
             $resource->state = 'maintenance';
-            $msg = 'flagged as BROKEN ⚠️';
+            $msg = 'flagged as BROKEN';
         } else {
             $resource->state = 'available';
-            $msg = 'marked as FIXED ✅';
+            $msg = 'marked as FIXED';
         }
 
         $resource->save();

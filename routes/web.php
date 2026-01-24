@@ -60,4 +60,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/reservation/{id}/approve', [App\Http\Controllers\ReservationController::class, 'approve'])->name('reservation.approve');
     Route::patch('/reservation/{id}/reject', [App\Http\Controllers\ReservationController::class, 'reject'])->name('reservation.reject');
     Route::patch('/resources/{id}/toggle', [App\Http\Controllers\ResourceController::class, 'toggleMaintenance'])->name('resources.toggle');
+    Route::delete('/users/{id}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+    Route::patch('/users/{id}/promote', [App\Http\Controllers\UserController::class, 'promote'])->name('users.promote');
 });

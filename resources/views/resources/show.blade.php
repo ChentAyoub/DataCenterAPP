@@ -51,12 +51,12 @@
                 
                 <div class="spec-grid">
                     <div class="spec-item">
-                        <strong>⚙️ Configuration</strong><br>
+                        <strong>Configuration</strong><br>
                         {{ $resource->specifications }}
                     </div>
                     
                     <div class="spec-item">
-                        <strong>📡 State</strong><br>
+                        <strong>State</strong><br>
                         @if($resource->state == 'available') 
                             <span class="status-available">● Fully Operational</span>
                         @else 
@@ -65,7 +65,7 @@
                     </div>
                     
                     <div class="spec-item">
-                        <strong>🆔 Asset ID</strong><br>
+                        <strong>Asset ID</strong><br>
                         #RES-{{ $resource->id }}00
                     </div>
                 </div>

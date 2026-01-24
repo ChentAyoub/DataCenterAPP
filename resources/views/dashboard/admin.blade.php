@@ -57,11 +57,25 @@
                     </td>
                     <td>{{ $u->created_at->format('M d, Y') }}</td>
                     <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-edit-sm">Edit</button>
+                       <div class="action-buttons">
+                            <form action="{{ route('users.promote', $u->id) }}" method="POST">
+                                @csrf @method('PATCH')
+                                <button class="btn btn-edit-sm" title="Change Role">
+                                    Role 🔄
+                                </button>
+                            </form>
+
                             @if(Auth::id() !== $u->id)
-                                <button class="btn btn-delete-sm">Delete</button>
+                                <form action="{{ route('users.destroy', $u->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-delete-sm" title="Delete User">
+                                        🗑️
+                                    </button>
+                                </form>
+                            @else
+                                <span style="font-size: 12px; color: #777; padding: 5px;">(You)</span>
                             @endif
+
                         </div>
                     </td>
                 </tr>
