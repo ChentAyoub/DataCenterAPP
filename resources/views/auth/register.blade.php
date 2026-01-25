@@ -53,6 +53,21 @@
                 <button type="submit" class="btn-primary btn-full">Register</button>
             </form>
 
+            <div class="divider">
+                <div class="divider">
+                    <span>Or sign up with</span>
+                </div>
+                    <a href="#" class="btn-social">
+                        <img src="{{ asset('images/google-logo.png') }}" alt="Google Logo" class="google-logo">
+                        Continue with Google
+                    </a>
+
+                    <a href="#" class="btn-social">
+                        <img src="{{ asset('images/apple-logo.png') }}" alt="Apple Logo" class="apple-logo">
+                        Continue with Apple
+                    </a>
+                </div>
+
             <div class="auth-footer">
                 <p>Already have an account? <a href="{{ route('login') }}" class="link-primary">Login here</a>.</p>
             </div>

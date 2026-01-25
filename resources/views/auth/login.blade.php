@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Data Center</title>
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 </head>
 <body class="auth-body">
 
@@ -16,7 +17,8 @@
     <main class="auth-container">
         
         <div class="auth-card">
-            <h2 class="auth-title">Login</h2>
+
+            <h2 class="auth-title">Get Started Now</h2>
             
             <form action="{{ route('login') }}" method="POST" class="auth-form">
                 @csrf 
@@ -39,6 +41,20 @@
 
                 <button type="submit" class="btn-primary btn-full">Login</button>
             </form>
+            <div class="divider">
+                <div class="divider">
+                    <span>Or sign in with</span>
+                </div>
+                    <a href="#" class="btn-social">
+                        <img src="{{ asset('images/google-logo.png') }}" alt="Google Logo" class="google-logo">
+                        Continue with Google
+                    </a>
+
+                    <a href="#" class="btn-social">
+                        <img src="{{ asset('images/apple-logo.png') }}" alt="Apple Logo" class="apple-logo">
+                        Continue with Apple
+                    </a>
+                </div>
 
             <div class="auth-footer">
                 <p>Don't have an account? <a href="{{ route('register') }}" class="link-primary">Sign up here</a>.</p>
