@@ -34,7 +34,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Password</label>
+                        <label for="passowrd" class="form-label">Password</label>
                         <div class="password-wrapper">
                             <input type="password" id="password" name="password" class="input-field" required placeholder="••••••••">
                             <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
