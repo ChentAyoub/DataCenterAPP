@@ -57,7 +57,8 @@ class AuthController extends Controller
         $formFields = $request->validate([
             'name' => ['required', 'min:3'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'min:6', 'confirmed'] 
+            'password' => ['required', 'min:6', 'confirmed'],
+            'terms' => 'accepted',
         ]);
 
         $formFields['password'] = bcrypt($formFields['password']);
