@@ -14,12 +14,6 @@ body.auth-body {
     flex-direction: column;
 
 }
-
-/* =============================
-   2. HEADER & NAVIGATION
-   ============================= */
-
-
 .auth-container {
     flex: 1;
     display: flex;
@@ -72,7 +66,7 @@ body.auth-body {
     flex: 1;
     background: #f0f0f0;
     position: relative;
-    display: none; /* Hidden on mobile */
+    display: none;
 }
 
 @media (min-width: 768px) {
@@ -203,8 +197,6 @@ body.auth-body {
 .form-check input { width: 16px; height: 16px; accent-color: #385c40; }
 .form-check a { color: #385c40; font-weight: 700; text-decoration: none; }
 
-
-/* LOGIN PAGE SPECIFIC */
 
 .form-actions {
     display: flex;

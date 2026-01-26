@@ -14,16 +14,16 @@ class DashboardController extends Controller
 {
     $user = Auth::user();
 
-    if ($user->role === 'student') {
+    if ($user->role === 'internal_user') {
         return redirect()->route('reservations.my_list');
     }
 
     if ($user->role === 'admin') {
 
         $role_counts = [
-            'student' => \App\Models\User::where('role', 'student')->count(),
-            'manager' => \App\Models\User::where('role', 'manager')->count(),
-            'admin'   => \App\Models\User::where('role', 'admin')->count(),
+            'internal users' => \App\Models\User::where('role', 'internal_user')->count(),
+            'managers' => \App\Models\User::where('role', 'manager')->count(),
+            'admins'   => \App\Models\User::where('role', 'admin')->count(),
         ];
         $resource_stats = [
             'available'   => \App\Models\Resource::where('state', 'available')->count(),

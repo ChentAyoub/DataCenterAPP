@@ -19,8 +19,8 @@ class ResourceController extends Controller
 
     public function manage()
     {
-        // Block students
-        if (Auth::user()->role === 'student') abort(403, 'Unauthorized.');
+        
+        if (Auth::user()->role === 'internal_user') abort(403, 'Unauthorized.');
         $resources = Resource::with('category')->orderBy('created_at', 'desc')->get();
         return view('resources.manage', compact('resources'));
     }
@@ -28,7 +28,7 @@ class ResourceController extends Controller
 
     public function create()
     {
-        if (Auth::user()->role === 'student') abort(403);
+        if (Auth::user()->role === 'internal_user') abort(403);
         
         $categories = Category::all();
         return view('resources.create', compact('categories'));
@@ -36,7 +36,7 @@ class ResourceController extends Controller
 
     public function store(Request $request)
     {
-        if (Auth::user()->role === 'student') abort(403);
+        if (Auth::user()->role === 'internal_user') abort(403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -60,7 +60,7 @@ class ResourceController extends Controller
 
     public function edit($id)
     {
-        if (Auth::user()->role === 'student') abort(403);
+        if (Auth::user()->role === 'internal_user') abort(403);
 
         $resource = Resource::findOrFail($id);
         $categories = Category::all();
@@ -70,7 +70,7 @@ class ResourceController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (Auth::user()->role === 'student') abort(403);
+        if (Auth::user()->role === 'internal_user') abort(403);
 
         $resource = Resource::findOrFail($id);
 
@@ -98,7 +98,7 @@ class ResourceController extends Controller
 
     public function toggleMaintenance($id)
     {
-        if (Auth::user()->role === 'student') abort(403);
+        if (Auth::user()->role === 'internal_user') abort(403);
 
         $resource = Resource::findOrFail($id);
 
@@ -117,7 +117,7 @@ class ResourceController extends Controller
 
     public function destroy($id)
     {
-        if (Auth::user()->role === 'student') abort(403);
+        if (Auth::user()->role === 'internal_user') abort(403);
 
         $resource = Resource::findOrFail($id);
         if ($resource->image) {

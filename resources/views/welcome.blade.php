@@ -3,283 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataCenter Home</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="pro-body">
 
-    <header class="main-header">
-        <nav class="navbar">
-            <h1 class="logo">DataCenter.io</h1>
+    <header class="pro-header">
+        <div class="container nav-row">
+            <a href="/" class="brand-logo">
+                <img src="{{ asset('images/logo1NBG.png') }}" alt="DataCenter Logo" class="logo-image">
+            </a>
             
-            <div class="user-menu">
+            <nav class="nav-links">
                 @auth
-                    <details class="notifications-dropdown">
-                        <summary>🔔 Notifications</summary>
-                        <ul>
-                            <li>✅ Reservation confirmed: Dell Server</li>
-                            <li>⚠️ Maintenance alert: Network Switch</li>
-                        </ul>
-                    </details>
-
-                    <span class="user-greeting">Hello, {{ Auth::user()->name }}</span>
-
-                    @if(Auth::user()->role === 'admin')
-                        <a href="{{ route('dashboard') }}" class="nav-link admin-link">🔧 Admin Panel</a>
-                    @elseif(Auth::user()->role === 'manager')
-                        <a href="{{ route('dashboard') }}" class="nav-link manager-link">⚡ Manager Dashboard</a>
-                    @else
-                        <a href="{{ route('dashboard') }}" class="nav-link student-link">📅 My Reservations</a>
-                    @endif
-                    
-                    <form action="{{ route('logout') }}" method="POST" class="logout-form">
-                        @csrf 
-                        <button class="btn-logout">Logout</button>
+                    <span class="user-greeting">Welcome, {{ Auth::user()->name }}</span>
+                    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                        @csrf
+                        <button class="nav-item btn-text">Logout</button>
                     </form>
+                    <a href="{{ url('/catalogue') }}" class="nav-item btn-primary">Browse Catalogue</a>
                 @else
-                    <a href="{{ route('login') }}" class="nav-link">Login</a> | 
-                    <a href="{{ route('register') }}" class="nav-link">Sign Up</a>
+                    <a href="{{ route('login') }}" class="nav-item btn-text">Log In</a>
+                    <a href="{{ route('register') }}" class="nav-item btn-primary">Get Started</a>
                 @endauth
-            </div>
-        </nav>
+            </nav>
+        </div>
     </header>
 
-    <hr class="divider">
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            <strong>✅ Success: {{ session('success') }}</strong>
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="alert alert-error">
-            <strong>⚠️ Errors:</strong>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <hr class="divider">
-
-    <section class="search-section">
-        <fieldset>
-            <legend>🔍 Find Resources</legend>
+    <section class="pro-hero">
+        <div class="container hero-container">
             
-            <form action="/" method="GET" class="search-form">
+            <div class="hero-content">
+                <span class="badge-caps">Internal Lab Resources</span>
+                <h1 class="hero-heading">High-Performance <br> Infrastructure Access.</h1>
+                <p class="hero-sub">
+                    Securely reserve and manage enterprise-grade hardware for your research and development projects.
+                </p>
                 
-                <div class="form-group">
-                    <label>Category</label>
-                    <select name="category_id" class="form-control">
-                        <option value="">-- All Categories --</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
-                                {{ $cat->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Keyword</label>
-                    <input type="text" name="search" class="form-control" placeholder="e.g. Dell..." value="{{ request('search') }}">
-                </div>
-                
-                <div class="form-group">
-                    <label>From</label>
-                    <input type="datetime-local" name="start_date" class="form-control" value="{{ request('start_date') }}">
-                </div>
-                
-                <div class="form-group">
-                    <label>To</label>
-                    <input type="datetime-local" name="end_date" class="form-control" value="{{ request('end_date') }}">
-                </div>
-
-                <button type="submit" class="btn-primary search-btn">Search</button>
-            </form>
-        </fieldset>
-    </section>
-
-    <hr class="divider">
-
-    <main class="main-content">
-        
-        @if(request('category_id') || request('search'))
-            
-            <div class="results-container">
-                <div class="section-header">
-                    <h2>
-                        @if(request('category_id'))
-                            {{ $categories->find(request('category_id'))->name }} Resources
-                        @else
-                            Search Results
-                        @endif
-                    </h2>
-                    <a href="/" class="link-clear">(Clear Filters)</a>
-                </div>
-
-                @if($resources->isEmpty())
-                    <p class="no-results">No resources found.</p>
-                @else
-                    <div class="grid-layout">
-                        @foreach($resources as $resource)
-                            <div class="resource-card">
-                                
-                                <div class="card-icon">
-                                    @if($resource->image)
-                                        <img src="{{ asset('storage/' . $resource->image) }}" alt="{{ $resource->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                    @else
-                                        <span style="font-size: 50px;">
-                                            @if($resource->category->name == 'Server') 🖥️
-                                            @elseif($resource->category->name == 'Router') 📡
-                                            @elseif($resource->category->name == 'Switch') 🔌
-                                            @else 📦 @endif
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <h3 class="card-title">{{ $resource->name }}</h3>
-                                <p class="card-specs">{{ $resource->specifications ?? 'Standard Specs' }}</p>
-
-                                <p class="card-status">
-                                    @if($resource->state == 'available') 
-                                        <span class="status-available">● Available</span>
-                                    @else 
-                                        <span class="status-maintenance">● Maintenance</span>
-                                    @endif
-                                </p>
-
-                                <div class="card-actions">
-                                    @auth
-                                        @if(Auth::user()->role === 'admin')
-                                            <a href="">
-                                                <button class="btn-secondary">Edit</button>
-                                            </a>
-                                            <form action="{{ route('resource.destroy', $resource->id) }}" method="POST" onsubmit="return confirm('Delete?');">
-                                                @csrf @method('DELETE')
-                                                <button class="btn-danger">Delete</button>
-                                            </form>
-                                        @elseif(Auth::user()->role === 'manager')
-                                            <a href="">
-                                                <button class="btn-secondary">Edit</button>
-                                            </a>
-                                            <form action="{{ route('resource.toggle', $resource->id) }}" method="POST">
-                                                @csrf @method('PATCH')
-                                                <button class="btn-warning">{{ $resource->state == 'available' ? '⚠️ Flag' : '✅ Fix' }}</button>
-                                            </form>
-                                        @else
-                                            <a href="{{ route('resource.show', [
-                                                'id' => $resource->id, 
-                                                'start_time' => request('start_date'), 
-                                                'end_time' => request('end_date')
-                                            ]) }}" style="text-decoration: none; width: 100%;">
-                                                <button class="btn-primary" style="width: 100%;">View & Reserve</button>
-                                            </a>
-                                        @endif
-                                    @else
-                                        <a href="{{ route('login') }}"><button class="btn-primary">Login to Book</button></a>
-                                    @endauth
-                                </div>
-                            </div>
-                        @endforeach
+                <div class="hero-actions">
+                    <a href="{{ url('/catalogue') }}" class="btn-hero-main">
+                        Browse Catalogue
+                    </a>
+                    <div class="hero-stat-row">
+                        <div class="tiny-stat">
+                            <strong>500+</strong> Units
+                        </div>
+                        <div class="vr"></div>
+                        <div class="tiny-stat">
+                            <strong>99.9%</strong> Uptime
+                        </div>
                     </div>
-                @endif
+                </div>
             </div>
 
+            <div class="hero-image-wrapper">
+                <img src="{{ asset('images/rege1.png') }}" alt="Server Rack">
+                <div class="image-card">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <div>
+                        <span class="d-block">System Status</span>
+                        <strong class="text-green">All Systems Operational</strong>
+                    </div>
+                </div>
+            </div>
 
-        @else
+        </div>
+    </section>
+
+    <section class="brand-section">
+
+        <div class="container">
+            <p class="brand-label">POWERED BY INDUSTRY LEADERS</p>
+            <div class="brand-track">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Cisco_logo.svg" alt="Cisco" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Dell_logo_2016.svg" alt="Dell" class="brand-icon">
+                <!--<img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Juniper_Networks_logo.svg" alt="Juniper" class="brand-icon">-->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Hewlett_Packard_Enterprise_logo.svg" alt="HPE" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="IBM" class="brand-icon" style="padding: 5px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg" alt="Nvidia" class="brand-icon">
+                <!--<img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Fortinet_logo.svg" alt="Fortinet" class="brand-icon">-->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Intel_logo_%282006-2020%29.svg" alt="Intel" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/AMD_Logo.svg" alt="AMD" class="brand-icon" style="padding: 5px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" alt="Microsoft" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Red_Hat_logo.svg" alt="Red Hat" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Vmware.svg" alt="VMware" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" alt="Oracle" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Cisco_logo.svg" alt="Cisco" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/18/Dell_logo_2016.svg" alt="Dell" class="brand-icon">
+                <!--<img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Juniper_Networks_logo.svg" alt="Juniper" class="brand-icon">-->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Hewlett_Packard_Enterprise_logo.svg" alt="HPE" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" alt="IBM" class="brand-icon" style="padding: 5px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg" alt="Nvidia" class="brand-icon">
+                <!--<img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Fortinet_logo.svg" alt="Fortinet" class="brand-icon">-->
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Intel_logo_%282006-2020%29.svg" alt="Intel" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/AMD_Logo.svg" alt="AMD" class="brand-icon" style="padding: 5px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" alt="Microsoft" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d8/Red_Hat_logo.svg" alt="Red Hat" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Vmware.svg" alt="VMware" class="brand-icon">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" alt="Oracle" class="brand-icon">
+            </div>
+        </div>
+    </section>
+
+    <section class="pro-features">
+        <div class="container">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon-circle"><i class="fa-solid fa-network-wired"></i></div>
+                    <h3>Network Topology</h3>
+                    <p>Access complex Cisco routing and switching configurations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-circle"><i class="fa-solid fa-microchip"></i></div>
+                    <h3>Compute Power</h3>
+                    <p>Reserve high-core PowerEdge servers for processing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-circle"><i class="fa-regular fa-calendar-check"></i></div>
+                    <h3>Guaranteed Access</h3>
+                    <p>Book your time slot in seconds. Your hardware is locked and ready when you are.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>Reservation Workflow</h2>
+                <p>Three simple steps to access enterprise-grade resources.</p>
+            </div>
+
+            <div class="steps-row">
+                <div class="step-item">
+                    <div class="step-number">01</div>
+                    <h4>Request</h4>
+                    <p>Select resource, define period, and submit justification.</p>
+                </div>
+                <div class="step-line"></div>
+                
+                <div class="step-item">
+                    <div class="step-number">02</div>
+                    <h4>Validation</h4>
+                    <p>Technical Manager reviews and approves the request.</p>
+                </div>
+                <div class="step-line"></div>
+
+                <div class="step-item">
+                    <div class="step-number">03</div>
+                    <h4>Notification</h4>
+                    <p>Receive alerts for status changes (Approved/Refused).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="pro-footer">
+        <div class="container footer-grid">
+            <div class="footer-col brand-col">
+                <a href="/" class="brand-logo" style="color:white;">
+                    <i class="fa-solid fa-server"></i> DataCenter<span class="dot">.io</span>
+                </a>
+                <p>Platform for allocation and tracking of Data Center IT resources.</p>
+            </div>
             
-            <h2 class="page-title">Available Resources</h2>
+            <div class="footer-col">
+                <h5>Navigation</h5>
+                <a href="{{ url('/catalogue') }}">Catalogue</a>
+                <a href="#">My Reservations</a>
+            </div>
+            
+            <div class="footer-col">
+                <h5>Legal</h5>
+                <a href="#">Usage Rules</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            
+            <div class="footer-col">
+                <h5>Contact Us</h5>
+                <a href="#">IT Support</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 DigitalCenter. All rights reserved.
+        </div>
+    </footer>
 
-            @if($resources->isEmpty())
-                <p class="no-results">No resources found.</p>
-            @else
-                
-                @foreach($resources->groupBy('category.name') as $categoryName => $items)
-                
-                <section class="category-section">
-                    
-                    <div class="section-header">
-                        <h3>{{ $categoryName }}</h3>
-                        <a href="/?category_id={{ $items->first()->category_id }}" class="link-see-all">
-                            See all >
-                        </a>
-                    </div>
+</body>
+</html>
 
-                    <div class="carousel-wrapper">
-                        
-                        <button class="carousel-btn btn-left" onclick="scrollCarousel('track-{{ $loop->index }}', -300)">❮</button>
-
-                        <div id="track-{{ $loop->index }}" class="carousel-track">
-                            
-                            @foreach($items as $resource)
-                            <div class="resource-card">
-                                
-                                <div class="card-icon">
-                                    @if($categoryName == 'Server') 🖥️<!-- for testing-->
-                                    @elseif($categoryName == 'Router') 📡
-                                    @elseif($categoryName == 'Switch') 🔌
-                                    @else 📦 @endif
-                                </div>
-
-                                <h3 class="card-title">{{ $resource->name }}</h3>
-                                <p class="card-specs">{{ $resource->specifications ?? 'Standard Specs' }}</p>
-
-                                <p class="card-status">
-                                    @if($resource->state == 'available') 
-                                        <span class="status-available">● Available</span>
-                                    @else 
-                                        <span class="status-maintenance">● Maintenance</span>
-                                    @endif
-                                </p>
-
-                                <div class="card-actions">
-                                    @auth
-                                        @if(Auth::user()->role === 'admin')
-                                            <a href=""><button class="btn-secondary">Edit</button></a>
-                                        @elseif(Auth::user()->role === 'manager')
-                                            <a href="">
-                                                <button class="btn-secondary">Edit</button>
-                                            </a>
-                                        @else
-                                            <a href="{{ route('resource.show', [
-                                                'id' => $resource->id, 
-                                                'start_time' => request('start_date'), 
-                                                'end_time' => request('end_date')
-                                            ]) }}" style="text-decoration: none; width: 100%;">
-                                                <button class="btn-primary" style="width: 100%;">View & Reserve</button>
-                                            </a>
-                                        @endif
-                                    @else
-                                            <a href="{{ route('login') }}">
-                                                <button class="btn-primary">Login to Book</button>
-                                            </a>
-                                    @endauth
-                                </div>
-
-                            </div>
-                            @endforeach
-
-                        </div>
-
-                        <button class="carousel-btn btn-right" onclick="scrollCarousel('track-{{ $loop->index }}', 300)">❯</button>
-                    
-                    </div>
-                </section>
-                @endforeach
-            @endif
-
-        @endif
-    </main>
-
-    <script>
-        function scrollCarousel(trackId, offset) {
-            const track = document.getElementById(trackId);
-            track.scrollBy({ left: offset, behavior: 'smooth' });
-        }
-    </script> 
 </body>
 </html>

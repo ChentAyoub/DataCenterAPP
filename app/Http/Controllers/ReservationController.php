@@ -70,7 +70,7 @@ class ReservationController extends Controller
    public function destroy($id)
     {
         $reservation = Reservation::findOrFail($id);
-        if ($reservation->user_id != Auth::id() && Auth::user()->role === 'student') {
+        if ($reservation->user_id != Auth::id() && Auth::user()->role === 'internal_user') {
             abort(403, 'Unauthorized action.');
         }
         $reservation->delete();
@@ -80,7 +80,7 @@ class ReservationController extends Controller
 
     public function approve($id)
     {
-        if(auth()->user()->role === 'student') {
+        if(auth()->user()->role === 'internal_user') {
             abort(403, 'Unauthorized action.');
         }
         $reservation = Reservation::findOrFail($id);
@@ -91,7 +91,7 @@ class ReservationController extends Controller
 
     public function reject($id)
     {
-        if(auth()->user()->role === 'student') {
+        if(auth()->user()->role === 'internal_user') {
             abort(403, 'Unauthorized action.');
         }
         $reservation = Reservation::findOrFail($id);

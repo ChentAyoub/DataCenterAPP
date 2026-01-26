@@ -10,13 +10,13 @@ use App\Models\Resource;
 
 
 
-Route::get('/', function (Request $request) {
+Route::view('/', 'welcome')->name('welcome');
+Route::get('/catalogue', function (Request $request) {
     $categories = Category::all();
     $query = Resource::with('category');
 
     if ($request->filled('search')) {
         $term = $request->search;
-        
         $query->where(function($q) use ($term) {
             $q->where('name', 'like', '%' . $term . '%')
               ->orWhere('specifications', 'like', '%' . $term . '%')
@@ -25,16 +25,15 @@ Route::get('/', function (Request $request) {
               });
         });
     }
-
     if ($request->filled('category_id')) {
         $query->where('category_id', $request->category_id);
     }
-    return view('welcome', [
+    return view('catalogue', [
         'resources' => $query->get(),
         'categories' => $categories 
     ]);
 
-})->name('home');
+})->name('catalogue');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
