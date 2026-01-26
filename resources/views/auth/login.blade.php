@@ -8,13 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">  
 </head>
 <body class="auth-body">
-
-    <header class="auth-header">
-        <nav class="auth-nav">
-            <a href="/" class="link-back">⬅ Back to Home</a>
-        </nav>
-    </header>
-
     <main class="auth-container">
         
         <div class="auth-card">
@@ -27,7 +20,7 @@
                     
                     <div class="form-group">
                         <label for="email" class="form-label">Email Address</label>
-                        <input type="email" id="email" name="email" class="input-field" required autofocus placeholder="student@university.com" value="{{ old('email') }}">
+                        <input type="email" id="email" name="email" class="input-field" required autofocus placeholder="example@datacenter.com" value="{{ old('email') }}">
                         @error('email') 
                             <div class="error-message">{{ $message }}</div> 
                         @enderror
@@ -65,7 +58,10 @@
                         <i class="fa-brands fa-google icon-google"></i>
                         Continue with Google
                     </a>
-                    
+                    <a href="#" class="btn-social">
+                        <i class="fa-brands fa-github" style="color: black; font-size: 18px;"></i>
+                        Continue with github
+                    </a>
                     <a href="#" class="btn-social" onclick="alert('Disabled for demo.'); return false;">
                         <i class="fa-brands fa-apple icon-apple"></i>
                         Continue with Apple
@@ -80,7 +76,8 @@
 
             <div class="right-panel">
                 <div class="image-panel">
-                     <div class="carousel-slide active" style="background-image: url('{{ asset('images/log1.png') }}'); opacity: 1;">
+                    <a href="/" class="link-back">⬅ Back to Home</a>
+                     <div class="carousel-slide active" style="background-image: url('{{ asset('images/log1.png') }}');">
                      </div>
                 </div>
             </div>

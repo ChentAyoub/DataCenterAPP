@@ -9,12 +9,6 @@
 </head>
 <body class="auth-body">
 
-    <header class="auth-header">
-        <nav class="auth-nav">
-            <a href="/" class="link-back">⬅ Back to Home</a>
-        </nav>
-    </header>
-
     <main class="auth-container">
         
         <div class="auth-card" style="flex-direction: row-reverse;">
@@ -34,7 +28,7 @@
 
                 <div class="form-group">
                     <label for="email" class="form-label">Email Address</label>
-                    <input type="email" id="email" name="email" class="form-control" required value="{{ old('email') }}" placeholder="student@university.com">
+                    <input type="email" id="email" name="email" class="form-control" required value="{{ old('email') }}" placeholder="example@datacenter.com">
                     @error('email') 
                         <div class="error-message">{{ $message }}</div> 
                     @enderror
@@ -72,7 +66,10 @@
                 <i class="fa-brands fa-google" style="color: black; font-size: 16px;"></i>
                 Continue with Google
             </a>
-            
+            <a href="#" class="btn-social">
+                <i class="fa-brands fa-github" style="color: black; font-size: 18px;"></i>
+                Continue with github
+            </a>
             <a href="#" class="btn-social" onclick="alert('demo only')">
                 <i class="fa-brands fa-apple" style="color: black; font-size: 18px;"></i>
                 Continue with Apple
@@ -86,6 +83,7 @@
 
          <div class="right-panel">
              <div class="image-panel">
+                <a href="/" class="link-back">⬅ Back to Home</a>
                  <div class="carousel-slide active" style="background-image: url('{{ asset('images/rege1.png') }}');">
                  </div>
                  <div class="carousel-slide" style="background-image: url('{{ asset('images/rege2.png') }}');">

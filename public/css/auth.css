@@ -18,18 +18,7 @@ body.auth-body {
 /* =============================
    2. HEADER & NAVIGATION
    ============================= */
-.auth-header { padding: 20px 40px; position: absolute; top: 0; left: 0; width: 100%; z-index: 10; }
-.link-back {
-    text-decoration: none;
-    color: #555;
-    font-weight: 600;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: 0.2s;
-}
-.link-back:hover { color: #385c40; transform: translateX(-3px); }
+
 
 .auth-container {
     flex: 1;
@@ -39,11 +28,30 @@ body.auth-body {
     padding: 20px;
 }
 
+.image-panel .link-back {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    color: white;
+    font-size: 12px;
+    text-decoration: none;
+    z-index: 10;
+    transition: 0.2s;
+}
+
+.image-panel .link-back:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateX(-1px);
+}
 .auth-card {
     background: white;
     width: 100%;
     max-width: 1200px;
-    min-height: 800px; 
+    min-height: 850px; 
     border-radius: 20px;
     box-shadow: 0 15px 50px rgba(0,0,0,0.1);
     display: flex;
