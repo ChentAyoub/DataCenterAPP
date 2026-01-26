@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Password</label>
+                    <label class="form-label">Password</label>
                     <div class="password-wrapper">
                         <input type="password" id="password" name="password" class="input-field" placeholder="••••••••" required>
                         <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
@@ -49,7 +49,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Confirm Password</label>
+                    <label class="form-label">Confirm Password</label>
                     <div class="password-wrapper">
                         <input type="password" id="password_confirmation" name="password_confirmation" class="input-field" placeholder="••••••••" required>
                         <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('password_confirmation', this)"></i>
