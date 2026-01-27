@@ -162,7 +162,7 @@
         <div class="container footer-grid">
             <div class="footer-col brand-col">
                 <a href="/" class="brand-logo" style="color:white;">
-                    <i class="fa-solid fa-server"></i> DataCenter<span class="dot">.io</span>
+                    <img src="{{ asset('images/logoBLK.png') }}" alt="DigitalCenter Logo" class="logo-image">
                 </a>
                 <p>Platform for allocation and tracking of Data Center IT resources.</p>
             </div>
@@ -175,8 +175,8 @@
             
             <div class="footer-col">
                 <h5>Legal</h5>
-                <a href="#">Usage Rules</a>
-                <a href="#">Privacy Policy</a>
+                <a href="{{route('usage-rules')}}">Usage Rules</a>
+                <a href="{{route('privacy-policy')}}">Privacy Policy</a>
             </div>
             
             <div class="footer-col">

@@ -40,6 +40,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::view('/usage-rules', 'rules.usage-rules')->name('usage-rules');
+Route::view('/privacy-policy', 'rules.privacy-policy')->name('privacy-policy');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
