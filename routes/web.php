@@ -45,7 +45,10 @@ Route::view('/privacy-policy', 'rules.privacy-policy')->name('privacy-policy');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
+    Route::get('/admin/dashboard', function () {
+        return redirect()->route('dashboard');
+    })->name('admin.dashboard');
+    Route::get('/admin/reservations', [ReservationController::class, 'adminReservations'])->name('admin.reservations');
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
     Route::patch('/resource/{id}/toggle', [ResourceController::class, 'toggleMaintenance'])->name('resource.toggle');
     Route::delete('/resource/{id}', [ResourceController::class, 'destroy'])->name('resource.destroy');
@@ -62,5 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/reservation/{id}/reject', [App\Http\Controllers\ReservationController::class, 'reject'])->name('reservation.reject');
     Route::patch('/resources/{id}/toggle', [App\Http\Controllers\ResourceController::class, 'toggleMaintenance'])->name('resources.toggle');
     Route::delete('/users/{id}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+    Route::patch('/users/{id}/approve', [App\Http\Controllers\UserController::class, 'approve'])->name('users.approve');
+    Route::patch('/users/{id}/reject', [App\Http\Controllers\UserController::class, 'reject'])->name('users.reject');
     Route::patch('/users/{id}/promote', [App\Http\Controllers\UserController::class, 'promote'])->name('users.promote');
 });

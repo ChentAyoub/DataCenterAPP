@@ -66,6 +66,35 @@ class ReservationController extends Controller
 
     }
 
+    public function adminReservations(Request $request)
+    {
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $query = Reservation::with(['user', 'resource']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('resource', function ($r) use ($search) {
+                    $r->where('name', 'like', "%{$search}%");
+                })->orWhereHas('user', function ($u) use ($search) {
+                    $u->where('name', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        $reservations = $query->orderBy('created_at', 'desc')->get();
+
+        return view('dashboard.admin-reservations', compact('reservations'));
+    }
+
 
    public function destroy($id)
     {

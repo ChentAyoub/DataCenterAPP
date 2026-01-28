@@ -3,128 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $resource->name }} - Details</title>
+    <title>Reserve {{ $resource->name }}</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="bg-light">
 
-    <nav class="detail-nav">
-        <a href="/" class="link-back">⬅ Back to Search</a>
-    </nav>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            ✅ {{ session('success') }}
-        </div>
-    @endif
-
-    <div class="detail-container">
+    <div class="bg-header">
+        <nav class="container nav-split">
+            <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Catalogue</a>
+            <span class="header-logo">DataCenter.io</span>
+        </nav>
         
-        <div class="left-column">
+        <div class="container header-content">
+            <div class="badge-pill">{{ $resource->category->name }}</div>
+            <h1>{{ $resource->name }}</h1>
+            <p class="asset-id">Asset ID: #RES-{{ $resource->id }}00 • <span class="opacity-70">Managed by Dept of Computing</span></p>
+        </div>
+    </div>
+
+    <div class="container main-content">
+        <div class="glass-card">
             
-            <div class="hero-image">
-                @if($resource->image)
-                    <img src="{{ asset('storage/' . $resource->image) }}" alt="{{ $resource->name }}" class="resource-img">
-                @else
-                    <span class="resource-emoji">
-                        @if($resource->category->name == 'Server') 🖥️
-                        @elseif($resource->category->name == 'Router') 📡
-                        @else 📦 @endif
-                    </span>
-                @endif
-            </div>
-
-            <h1 class="resource-title">{{ $resource->name }}</h1>
-            <p class="resource-category">{{ $resource->category->name }}</p>
-
-            <hr class="divider">
-
-            <div class="resource-description">
-                <h3>About this resource</h3>
-                <p>
-                    {{ $resource->description ?? 'No detailed description available for this resource.' }}
-                </p>
-            </div>
-
-            <div class="resource-specs">
-                <h3>Technical Specifications</h3>
-                
-                <div class="spec-grid">
-                    <div class="spec-item">
-                        <strong>Configuration</strong><br>
-                        {{ $resource->specifications }}
-                    </div>
-                    
-                    <div class="spec-item">
-                        <strong>State</strong><br>
-                        @if($resource->state == 'available') 
-                            <span class="status-available">● Fully Operational</span>
-                        @else 
-                            <span class="status-maintenance">● Under Maintenance</span>
+            <div class="card-grid">
+                <div class="card-left">
+                    <div class="resource-visual">
+                        @if($resource->image)
+                            <img src="{{ asset('storage/' . $resource->image) }}" alt="Res">
+                        @else
+                            <i class="fa-solid fa-server"></i>
                         @endif
+                        <div class="status-overlay {{ $resource->state == 'available' ? 'st-green' : 'st-red' }}">
+                            {{ $resource->state == 'available' ? '● Online' : '● Maintenance' }}
+                        </div>
                     </div>
-                    
-                    <div class="spec-item">
-                        <strong>Asset ID</strong><br>
-                        #RES-{{ $resource->id }}00
+
+                    <div class="specs-box">
+                        <h3>System Specifications</h3>
+                        <div class="spec-row">
+                            <div class="spec-icon"><i class="fa-solid fa-microchip"></i></div>
+                            <div class="spec-text">
+                                <label>Configuration</label>
+                                <strong>{{ $resource->specifications }}</strong>
+                            </div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-icon"><i class="fa-solid fa-location-dot"></i></div>
+                            <div class="spec-text">
+                                <label>Location</label>
+                                <strong>Server Room B, Rack 4</strong>
+                            </div>
+                        </div>
+                        <div class="spec-row">
+                            <div class="spec-icon"><i class="fa-solid fa-file-lines"></i></div>
+                            <div class="spec-text">
+                                <label>Description</label>
+                                <p>{{ $resource->description }}</p>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <div class="card-right">
+                    <div class="booking-header">
+                        <h2>Reservation</h2>
+                        <p>Select your time slot below.</p>
+                    </div>
+
+                    @auth
+                        <form action="{{ route('reservation.store') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="resource_id" value="{{ $resource->id }}">
+
+                            <div class="input-group">
+                                <label>Start Time</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-regular fa-calendar"></i>
+                                    <input type="datetime-local" name="start_time" required>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label>End Time</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-clock"></i>
+                                    <input type="datetime-local" name="end_time" required>
+                                </div>
+                            </div>
+
+                            <div class="total-bar">
+                                <span>Session Limit</span>
+                                <strong>4 Hours Max</strong>
+                            </div>
+
+                            @if($resource->state == 'available')
+                                <button type="submit" class="btn-confirm">
+                                    Confirm Reservation <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            @else
+                                <button disabled class="btn-disabled">Currently Unavailable</button>
+                            @endif
+                        </form>
+                    @else
+                        <div class="login-wall">
+                            <i class="fa-solid fa-lock"></i>
+                            <p>Please log in to book resources.</p>
+                            <a href="{{ route('login') }}" class="btn-confirm">Login Now</a>
+                        </div>
+                    @endauth
                 </div>
             </div>
 
         </div>
-
-        <div class="right-column">
-            <div class="reservation-card">
-                
-                <span class="card-header">Reserve Now</span>
-
-                @auth
-                    <form action="{{ route('reservation.store') }}" method="POST" class="reservation-form">
-                        @csrf
-                        <input type="hidden" name="resource_id" value="{{ $resource->id }}">
-
-                        <div class="form-group">
-                            <label>Start Date</label>
-                            <input type="datetime-local" name="start_time" 
-                                   value="{{ request('start_time') }}" 
-                                   required class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label>End Date</label>
-                            <input type="datetime-local" name="end_time" 
-                                   value="{{ request('end_time') }}" 
-                                   required class="form-control">
-                        </div>
-
-                        @if($resource->state == 'available')
-                            <button type="submit" class="btn-primary btn-full">
-                                Confirm Reservation
-                            </button>
-                        @else
-                            <button type="button" disabled class="btn-disabled btn-full">
-                                ⛔ Currently Unavailable
-                            </button>
-                            <p class="maintenance-warning">
-                                This resource is flagged for maintenance.
-                            </p>
-                        @endif
-                    </form>
-
-                @else
-                    <div class="guest-message">
-                        <p>Log in to check availability and book this resource.</p>
-                        <a href="{{ route('login') }}">
-                            <button class="btn-primary btn-full">
-                                Login to Book
-                            </button>
-                        </a>
-                    </div>
-                @endauth
-
-            </div>
-        </div>
-
     </div>
 
 </body>

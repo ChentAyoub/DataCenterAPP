@@ -30,7 +30,12 @@ class DashboardController extends Controller
             'maintenance' => \App\Models\Resource::where('state', 'maintenance')->count(),
         ];
         $recent_users = \App\Models\User::orderBy('created_at', 'desc')->take(5)->get();
-        return view('dashboard.admin', compact('role_counts', 'resource_stats', 'recent_users'));
+        $pending_reservations = \App\Models\Reservation::where('status', 'pending')
+            ->with(['user', 'resource'])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return view('dashboard.admin', compact('role_counts', 'resource_stats', 'recent_users', 'pending_reservations'));
     }
     if ($user->role === 'manager') {
         $pending_reservations = \App\Models\Reservation::where('status', 'pending')
