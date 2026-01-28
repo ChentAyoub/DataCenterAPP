@@ -10,6 +10,20 @@ use Illuminate\Support\Facades\Storage;
 
 class ResourceController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = Resource::query();
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('specifications', 'like', '%' . $request->search . '%');
+        }
+        $resources = $query->orderBy('created_at', 'desc')->paginate(20);
+        $categories = Category::all();
+        return view('catalogue', compact('resources', 'categories'));
+    }
 
     public function show($id)
     {
@@ -19,12 +33,11 @@ class ResourceController extends Controller
 
     public function manage()
     {
-        
         if (Auth::user()->role === 'internal_user') abort(403, 'Unauthorized.');
-        $resources = Resource::with('category')->orderBy('created_at', 'desc')->get();
+        $resources = Resource::with('category')->orderBy('created_at', 'desc')->paginate(10);
+        
         return view('resources.manage', compact('resources'));
     }
-
 
     public function create()
     {
@@ -43,7 +56,7 @@ class ResourceController extends Controller
             'category_id' => 'required|exists:categories,id',
             'specifications' => 'required|string',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048', // Max 2MB
+            'image' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('image')) {
@@ -94,8 +107,6 @@ class ResourceController extends Controller
         return redirect()->route('resources.manage')->with('success', 'Item updated successfully!');
     }
 
-
-
     public function toggleMaintenance($id)
     {
         if (Auth::user()->role === 'internal_user') abort(403);
@@ -113,7 +124,6 @@ class ResourceController extends Controller
         $resource->save();
         return back()->with('success', 'Resource ' . $msg);
     }
-
 
     public function destroy($id)
     {

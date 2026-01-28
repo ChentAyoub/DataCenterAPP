@@ -3,283 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataCenter Home</title>
+    <title>Catalogue - DataCenter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <script src="{{ asset('js/catalogue.js') }}" defer></script>
 </head>
 <body>
 
-    <header class="main-header">
-        <nav class="navbar">
-            <h1 class="logo">DataCenter.io</h1>
-            
-            <div class="user-menu">
-                @auth
-                    <details class="notifications-dropdown">
-                        <summary>🔔 Notifications</summary>
-                        <ul>
-                            <li>✅ Reservation confirmed: Dell Server</li>
-                            <li>⚠️ Maintenance alert: Network Switch</li>
-                        </ul>
-                    </details>
-
-                    <span class="user-greeting">Hello, {{ Auth::user()->name }}</span>
-
-                    @if(Auth::user()->role === 'admin')
-                        <a href="{{ route('dashboard') }}" class="nav-link admin-link">🔧 Admin Panel</a>
-                    @elseif(Auth::user()->role === 'manager')
-                        <a href="{{ route('dashboard') }}" class="nav-link manager-link">⚡ Manager Dashboard</a>
-                    @else
-                        <a href="{{ route('dashboard') }}" class="nav-link user-link">📅 My Reservations</a>
-                    @endif
-                    
-                    <form action="{{ route('logout') }}" method="POST" class="logout-form">
-                        @csrf 
-                        <button class="btn-logout">Logout</button>
-                    </form>
+    <nav class="pro-navbar">
+        <a href="/" class="pro-logo"><img src="{{ asset('images/logo1NBG.png') }}" alt="DataCenter Logo" class="logo-image" style="height:100px; vertical-align:middle;"></a>
+        <div class="pro-menu">
+            <a href="/" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
+            @auth
+                <a href="#" class="nav-btn warning"><i class="fa-solid fa-triangle-exclamation"></i> Reclamations</a>
+                @if(Auth::user()->role === 'admin')
+                    <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-wrench"></i> Admin Panel</a>
+                @elseif(Auth::user()->role === 'manager')
+                    <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-bolt"></i> Manager Dash</a>
                 @else
-                    <a href="{{ route('login') }}" class="nav-link">Login</a> | 
-                    <a href="{{ route('register') }}" class="nav-link">Sign Up</a>
-                @endauth
-            </div>
-        </nav>
-    </header>
-
-    <hr class="divider">
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            <strong>✅ Success: {{ session('success') }}</strong>
+                    <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-calendar-check"></i> My Reservations</a>
+                @endif
+                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                    @csrf 
+                    <button class="nav-btn logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="nav-btn">Login</a>
+                <a href="{{ route('register') }}" class="nav-btn primary">Sign Up</a>
+            @endauth
         </div>
-    @endif
+    </nav>
 
-    @if($errors->any())
-        <div class="alert alert-error">
-            <strong>⚠️ Errors:</strong>
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <hr class="divider">
-
-    <section class="search-section">
-        <fieldset>
-            <legend>🔍 Find Resources</legend>
-            
-            <form action="/" method="GET" class="search-form">
-                
-                <div class="form-group">
-                    <label>Category</label>
-                    <select name="category_id" class="form-control">
-                        <option value="">-- All Categories --</option>
-                        @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
-                                {{ $cat->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Keyword</label>
-                    <input type="text" name="search" class="form-control" placeholder="e.g. Dell..." value="{{ request('search') }}">
-                </div>
-                
-                <div class="form-group">
-                    <label>From</label>
-                    <input type="datetime-local" name="start_date" class="form-control" value="{{ request('start_date') }}">
-                </div>
-                
-                <div class="form-group">
-                    <label>To</label>
-                    <input type="datetime-local" name="end_date" class="form-control" value="{{ request('end_date') }}">
-                </div>
-
-                <button type="submit" class="btn-primary search-btn">Search</button>
-            </form>
-        </fieldset>
-    </section>
-
-    <hr class="divider">
-
-    <main class="main-content">
+    <div class="app-container">
         
-        @if(request('category_id') || request('search'))
-            
-            <div class="results-container">
-                <div class="section-header">
-                    <h2>
-                        @if(request('category_id'))
-                            {{ $categories->find(request('category_id'))->name }} Resources
-                        @else
-                            Search Results
-                        @endif
-                    </h2>
-                    <a href="/" class="link-clear">(Clear Filters)</a>
-                </div>
-
-                @if($resources->isEmpty())
-                    <p class="no-results">No resources found.</p>
-                @else
-                    <div class="grid-layout">
-                        @foreach($resources as $resource)
-                            <div class="resource-card">
-                                
-                                <div class="card-icon">
-                                    @if($resource->image)
-                                        <img src="{{ asset('storage/' . $resource->image) }}" alt="{{ $resource->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                                    @else
-                                        <span style="font-size: 50px;">
-                                            @if($resource->category->name == 'Server') 🖥️
-                                            @elseif($resource->category->name == 'Router') 📡
-                                            @elseif($resource->category->name == 'Switch') 🔌
-                                            @else 📦 @endif
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <h3 class="card-title">{{ $resource->name }}</h3>
-                                <p class="card-specs">{{ $resource->specifications ?? 'Standard Specs' }}</p>
-
-                                <p class="card-status">
-                                    @if($resource->state == 'available') 
-                                        <span class="status-available">● Available</span>
-                                    @else 
-                                        <span class="status-maintenance">● Maintenance</span>
-                                    @endif
-                                </p>
-
-                                <div class="card-actions">
-                                    @auth
-                                        @if(Auth::user()->role === 'admin')
-                                            <a href="">
-                                                <button class="btn-secondary">Edit</button>
-                                            </a>
-                                            <form action="{{ route('resource.destroy', $resource->id) }}" method="POST" onsubmit="return confirm('Delete?');">
-                                                @csrf @method('DELETE')
-                                                <button class="btn-danger">Delete</button>
-                                            </form>
-                                        @elseif(Auth::user()->role === 'manager')
-                                            <a href="">
-                                                <button class="btn-secondary">Edit</button>
-                                            </a>
-                                            <form action="{{ route('resource.toggle', $resource->id) }}" method="POST">
-                                                @csrf @method('PATCH')
-                                                <button class="btn-warning">{{ $resource->state == 'available' ? '⚠️ Flag' : '✅ Fix' }}</button>
-                                            </form>
-                                        @else
-                                            <a href="{{ route('resource.show', [
-                                                'id' => $resource->id, 
-                                                'start_time' => request('start_date'), 
-                                                'end_time' => request('end_date')
-                                            ]) }}" style="text-decoration: none; width: 100%;">
-                                                <button class="btn-primary" style="width: 100%;">View & Reserve</button>
-                                            </a>
-                                        @endif
-                                    @else
-                                        <a href="{{ route('login') }}"><button class="btn-primary">Login to Book</button></a>
-                                    @endauth
-                                </div>
+        <aside class="sidebar">
+            <form action="/" method="GET" id="filterForm">
+                <div class="filter-group">
+                    <h3>Select Date</h3>
+                    <div class="calendar-widget">
+                        <div class="cal-inputs">
+                            <div class="cal-input-group">
+                                <span class="cal-label">From</span>
+                                <div id="displayStart" class="cal-display" onclick="setPickMode('start')">--/--</div>
                             </div>
+                            <div class="cal-input-group">
+                                <span class="cal-label">To</span>
+                                <div id="displayEnd" class="cal-display" onclick="setPickMode('end')">--/--</div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="start_date" id="realStart" value="{{ request('start_date') }}">
+                        <input type="hidden" name="end_date" id="realEnd" value="{{ request('end_date') }}">
+                        <div class="cal-header">
+                            <div class="cal-nav" onclick="changeMonth(-1)">❮</div>
+                            <div class="cal-month" id="calMonthYear">January 2026</div>
+                            <div class="cal-nav" onclick="changeMonth(1)">❯</div>
+                            <button type="button" class="btn-today" onclick="goToToday()">Today</button>
+                        </div>
+                        <div class="cal-grid">
+                            <div class="cal-day-name">Mo</div><div class="cal-day-name">Tu</div><div class="cal-day-name">We</div>
+                            <div class="cal-day-name">Th</div><div class="cal-day-name">Fr</div><div class="cal-day-name">Sa</div>
+                            <div class="cal-day-name">Su</div>
+                        </div>
+                        <div class="cal-grid" id="calDays"></div>
+                        <button type="submit" class="btn-apply-filters">Apply Dates</button>
+                    </div>
+                </div>
+                <br><br>
+                <div class="filter-group">
+                    <h3>Categories</h3>
+                    <div class="cat-list">
+                        <label class="cat-item">
+                            <input type="radio" name="category_id" value="" {{ !request('category_id') ? 'checked' : '' }} onchange="this.form.submit()">
+                            All Resources
+                        </label>
+                        @foreach($categories as $cat)
+                        <label class="cat-item">
+                            <input type="radio" name="category_id" value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'checked' : '' }} onchange="this.form.submit()">
+                            {{ $cat->name }}
+                        </label>
                         @endforeach
                     </div>
-                @endif
+                </div>
+            </form>
+        </aside>
+
+        <main class="content-area">
+            <div class="top-bar">
+                <div class="back-link" onclick="window.history.back()">
+                    <i class="fa-solid fa-arrow-left"></i> &nbsp;Back
+                </div>
+                <input type="text" form="filterForm" name="search" class="top-search" placeholder="Search resources..." value="{{ request('search') }}">
             </div>
-
-
-        @else
-            
-            <h2 class="page-title">Available Resources</h2>
 
             @if($resources->isEmpty())
-                <p class="no-results">No resources found.</p>
+                <div style="text-align:center; padding:50px; color:#999;">
+                    <h3>No resources found</h3>
+                    <p>Try adjusting your filters.</p>
+                </div>
             @else
-                
-                @foreach($resources->groupBy('category.name') as $categoryName => $items)
-                
-                <section class="category-section">
-                    
-                    <div class="section-header">
-                        <h3>{{ $categoryName }}</h3>
-                        <a href="/?category_id={{ $items->first()->category_id }}" class="link-see-all">
-                            See all >
-                        </a>
-                    </div>
-
-                    <div class="carousel-wrapper">
-                        
-                        <button class="carousel-btn btn-left" onclick="scrollCarousel('track-{{ $loop->index }}', -300)">❮</button>
-
-                        <div id="track-{{ $loop->index }}" class="carousel-track">
-                            
-                            @foreach($items as $resource)
-                            <div class="resource-card">
-                                
-                                <div class="card-icon">
-                                    @if($categoryName == 'Server') 🖥️<!-- for testing-->
-                                    @elseif($categoryName == 'Router') 📡
-                                    @elseif($categoryName == 'Switch') 🔌
-                                    @else 📦 @endif
-                                </div>
-
-                                <h3 class="card-title">{{ $resource->name }}</h3>
-                                <p class="card-specs">{{ $resource->specifications ?? 'Standard Specs' }}</p>
-
-                                <p class="card-status">
-                                    @if($resource->state == 'available') 
-                                        <span class="status-available">● Available</span>
-                                    @else 
-                                        <span class="status-maintenance">● Maintenance</span>
-                                    @endif
-                                </p>
-
-                                <div class="card-actions">
-                                    @auth
-                                        @if(Auth::user()->role === 'admin')
-                                            <a href=""><button class="btn-secondary">Edit</button></a>
-                                        @elseif(Auth::user()->role === 'manager')
-                                            <a href="">
-                                                <button class="btn-secondary">Edit</button>
-                                            </a>
-                                        @else
-                                            <a href="{{ route('resource.show', [
-                                                'id' => $resource->id, 
-                                                'start_time' => request('start_date'), 
-                                                'end_time' => request('end_date')
-                                            ]) }}" style="text-decoration: none; width: 100%;">
-                                                <button class="btn-primary" style="width: 100%;">View & Reserve</button>
-                                            </a>
-                                        @endif
-                                    @else
-                                            <a href="{{ route('login') }}">
-                                                <button class="btn-primary">Login to Book</button>
-                                            </a>
-                                    @endauth
-                                </div>
-
-                            </div>
-                            @endforeach
-
+                <div class="card-grid">
+                    @foreach($resources as $resource)
+                    <div class="pro-card">
+                        <div class="card-img">
+                            @if($resource->image)
+                                <img src="{{ asset('storage/' . $resource->image) }}" alt="{{ $resource->name }}">
+                            @else
+                                <i class="fa-solid fa-server"></i>
+                            @endif
                         </div>
+                        <span class="status-badge {{ $resource->state == 'available' ? 'green' : 'orange' }}">
+                            {{ $resource->state == 'available' ? 'Available' : 'Maintenance' }}
+                        </span>
+                        <div class="card-body">
+                            <h4 class="card-title">{{ $resource->name }}</h4>
+                            <p class="card-specs">{{ Str::limit($resource->specifications ?? 'High Perf.', 40) }}</p>
+                            
+                            <div class="card-actions">
+                                @auth
+                                    @if(Auth::user()->role === 'admin')
+                                        <div style="display:flex; gap:10px;">
+                                            <a href="{{ route('resources.edit', $resource->id) }}" style="flex:1;">
+                                                <button class="card-btn" style="background:#fff; border:1px solid #ddd; color:#333;">Edit</button>
+                                            </a>
+                                            <form action="{{ route('resource.destroy', $resource->id) }}" method="POST" onsubmit="return confirm('Delete?');" style="flex:1;">
+                                                @csrf @method('DELETE')
+                                                <button class="card-btn" style="background:#fee2e2; color:#b91c1c;">Delete</button>
+                                            </form>
+                                        </div>
 
-                        <button class="carousel-btn btn-right" onclick="scrollCarousel('track-{{ $loop->index }}', 300)">❯</button>
-                    
+                                    @elseif(Auth::user()->role === 'manager')
+                                        <div style="display:flex; gap:10px;">
+                                            <a href="{{ route('resources.edit', $resource->id) }}" style="flex:1;">
+                                                <button class="card-btn" style="background:#fff; border:1px solid #ddd; color:#333;">Edit</button>
+                                            </a>
+                                            <form action="{{ route('resource.toggle', $resource->id) }}" method="POST" style="flex:1;">
+                                                @csrf @method('PATCH')
+                                                <button class="card-btn" style="background:#fff7ed; color:#c2410c;">
+                                                    {{ $resource->state == 'available' ? 'Flag' : 'Fix' }}
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                    @else
+                                        <a href="{{ route('resources.show', ['id' => $resource->id]) }}" class="card-btn">
+                                            {{ $resource->state == 'available' ? 'Reserve Now' : 'View Details' }}
+                                        </a>
+                                    @endif
+                                @else
+                                    <a href="{{ route('login') }}" class="card-btn">Login to Reserve</a>
+                                @endauth
+                            </div>
+                            </div>
                     </div>
-                </section>
-                @endforeach
+                    @endforeach
+                </div>
+
+                <div class="pagination-wrapper">
+                    @if($resources->hasPages())
+                        {{ $resources->appends(request()->query())->links() }}
+                    @else
+                        <ul class="pagination" role="navigation">
+                            <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
+                            <li class="page-item active"><span class="page-link">1</span></li>
+                            <li class="page-item disabled"><span class="page-link">&rsaquo;</span></li>
+                        </ul>
+                    @endif
+                </div>
             @endif
+        </main>
+    </div>
 
-        @endif
-    </main>
+    <footer class="pro-footer">
+        <div class="footer-grid">
+            <div class="footer-col brand-col">
+                <a href="/" class="brand-logo" style="color:white;">
+                    <img src="{{ asset('images/logoBLK.png') }}" alt="DigitalCenter" style="height:100px; vertical-align:middle;">
+                </a>
+                <p>Platform for allocation and tracking of Data Center IT resources.</p>
+            </div>
+            <div class="footer-col">
+                <h5>Navigation</h5>
+                <a href="{{ url('/catalogue') }}">Catalogue</a>
+                <a href="#">My Reservations</a>
+            </div>
+            <div class="footer-col">
+                <h5>Legal</h5>
+                <a href="#">Usage Rules</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+            <div class="footer-col">
+                <h5>Contact Us</h5>
+                <a href="#">IT Support</a>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 DigitalCenter. All rights reserved.</div>
+    </footer>
 
-    <script>
-        function scrollCarousel(trackId, offset) {
-            const track = document.getElementById(trackId);
-            track.scrollBy({ left: offset, behavior: 'smooth' });
-        }
-    </script> 
 </body>
 </html>

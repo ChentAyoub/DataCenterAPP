@@ -46,7 +46,7 @@
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            <a class="brand" href="{{ route('welcome') }}" aria-label="Back to home">
+            <a class="brand" href="{{ route('catalogue') }}" aria-label="Back to home">
                 <img src="{{ asset('images/logo1NBG.png') }}" alt="DataCenter" class="brand-logo" />
                 <span>DataCenter</span>
             </a>
