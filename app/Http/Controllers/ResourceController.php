@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Resource;
 use App\Models\Category;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,13 +18,28 @@ class ResourceController extends Controller
             $query->where('category_id', $request->category_id);
         }
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('specifications', 'like', '%' . $request->search . '%');
-        }
-        $resources = $query->orderBy('created_at', 'desc')->paginate(20);
-        $categories = Category::all();
-        return view('catalogue', compact('resources', 'categories'));
+                 $query->where('name', 'like', '%' . $request->search . '%')
+                        ->orWhere('specifications', 'like', '%' . $request->search . '%');
+             }
+             $resources = $query->orderBy('created_at', 'desc')->paginate(20);
+             $categories = Category::all();
+             $notifications = collect();
+         $unreadCount = 0;
+
+         if (Auth::check()) {
+             $notifications = Notification::where('user_id', Auth::id())
+                             ->orderBy('created_at', 'desc')
+                             ->take(10)
+                             ->get();
+
+             $unreadCount = Notification::where('user_id', Auth::id())
+                             ->where('is_read', false)
+                             ->count();
+         }
+
+         return view('catalogue', compact('resources', 'categories', 'notifications', 'unreadCount'));
     }
+        
 
     public function show($id)
     {
@@ -137,5 +153,13 @@ class ResourceController extends Controller
         $resource->delete();
 
         return back()->with('success', 'Resource deleted permanently.');
+    }
+    public function markAsRead()
+    {
+        Notification::where('user_id', Auth::id())
+                    ->where('is_read', false)
+                    ->update(['is_read' => true]);
+
+        return response()->json(['success' => true]);
     }
 }

@@ -17,15 +17,23 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::view('/usage-rules', 'rules.usage-rules')->name('usage-rules');
 Route::view('/privacy-policy', 'rules.privacy-policy')->name('privacy-policy');
 Route::get('/resources/{id}', [ResourceController::class, 'show'])->name('resources.show');
+Route::post('/reservations/{id}/status', [DashboardController::class, 'updateStatus'])
+    ->name('reservations.updateStatus')
+    ->middleware('auth');
+
+Route::post('/notifications/mark-read', [ResourceController::class, 'markAsRead'])
+    ->name('notifications.markRead')
+    ->middleware('auth');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/admin/dashboard', function () {
+        return redirect()->route('dashboard');
+    })->name('admin.dashboard');
     Route::get('/admin/reservations', [ReservationController::class, 'adminReservations'])->name('admin.reservations');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/my-reservations', [ReservationController::class, 'myReservations'])->name('reservations.my_list');
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
     Route::delete('/reservation/{id}', [ReservationController::class, 'destroy'])->name('reservation.destroy');
-    Route::get('/my-reservations', [ReservationController::class, 'myReservations'])->name('reservations.my_list');
-    Route::patch('/reservation/{id}/approve', [ReservationController::class, 'approve'])->name('reservation.approve');
-    Route::patch('/reservation/{id}/reject', [ReservationController::class, 'reject'])->name('reservation.reject');
     Route::get('/resources/manage', [ResourceController::class, 'manage'])->name('resources.manage');
     Route::get('/resources/create', [ResourceController::class, 'create'])->name('resources.create');
     Route::post('/resources', [ResourceController::class, 'store'])->name('resources.store');
@@ -37,4 +45,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/users/{id}/approve', [UserController::class, 'approve'])->name('users.approve');
     Route::patch('/users/{id}/reject', [UserController::class, 'reject'])->name('users.reject');
     Route::patch('/users/{id}/promote', [UserController::class, 'promote'])->name('users.promote');
+    Route::patch('/reservation/{id}/reject', [App\Http\Controllers\ReservationController::class, 'reject'])->name('reservation.reject');
+    Route::patch('/users/{id}/reject', [App\Http\Controllers\UserController::class, 'reject'])->name('users.reject');
 });

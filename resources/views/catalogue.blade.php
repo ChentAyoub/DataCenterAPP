@@ -20,9 +20,49 @@
                     <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-wrench"></i> Admin Panel</a>
                 @elseif(Auth::user()->role === 'manager')
                     <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-bolt"></i> Manager Dash</a>
-                @else
-                    <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-calendar-check"></i> My Reservations</a>
-                @endif
+               @else
+                <div class="notify-wrapper">
+                   <div class="notify-icon-container" onclick="toggleNotifications()">
+                       <i class="fa-solid fa-bell"></i>
+                       @if(isset($unreadCount) && $unreadCount > 0)
+                           <span class="notify-badge" id="notify-badge-id">{{ $unreadCount }}</span>
+                       @endif
+                   </div>
+
+                   <div class="notify-dropdown" id="notificationDropdown">
+                       <div class="notify-header">
+                           <h4>Notifications</h4>
+                           <span class="mark-read" id="mark-read-btn" onclick="markAllAsRead()">Mark all read</span>
+                       </div>
+
+                       <div class="notify-list" id="notify-list-container">
+                           @if(isset($notifications) && $notifications->count() > 0)
+                               @foreach($notifications as $notify)
+                                   <div class="notify-item {{ $notify->is_read ? '' : 'unread' }}" id="notify-item-{{ $notify->id }}">
+                                       <div class="n-icon {{ $notify->type == 'success' ? 'success' : 'warning' }}">
+                                           @if($notify->type == 'success')
+                                               <i class="fa-solid fa-check"></i>
+                                           @else
+                                               <i class="fa-solid fa-info"></i>
+                                           @endif
+                                       </div>
+                                       <div class="n-content">
+                                           <span class="n-msg">{{ $notify->message }}</span>
+                                           <span class="n-time">{{ $notify->created_at->diffForHumans() }}</span>
+                                       </div>
+                                   </div>
+                               @endforeach
+                           @else
+                               <div class="empty-state">No notifications yet.</div>
+                           @endif
+                       </div>
+                   </div>
+                </div>
+
+                 <a href="{{ route('dashboard') }}" class="nav-btn primary">
+                     <i class="fa-solid fa-calendar-check"></i> My Reservations
+                 </a>
+            @endif
                 <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                     @csrf 
                     <button class="nav-btn logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Log Out</button>
@@ -160,7 +200,7 @@
 
                 <div class="pagination-wrapper">
                     @if($resources->hasPages())
-                        {{ $resources->appends(request()->query())->links() }}
+                        {{ $resources->appends(request()->query())->links('pagination.default') }}
                     @else
                         <ul class="pagination" role="navigation">
                             <li class="page-item disabled"><span class="page-link">&lsaquo;</span></li>
@@ -197,7 +237,74 @@
             </div>
         </div>
         <div class="footer-bottom">&copy; 2026 DigitalCenter. All rights reserved.</div>
+ 
     </footer>
+
+
+
+
+<script>
+
+    function toggleNotifications() {
+        const dropdown = document.getElementById('notificationDropdown');
+        const icon = document.querySelector('.notify-icon-container');
+        
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+            icon.classList.remove('active');
+        } else {
+            dropdown.style.display = 'block';
+            icon.classList.add('active');
+        }
+    }
+
+    function markAllAsRead() {
+        console.log("1. Starting Mark Read process..."); // Debug
+        fetch("{{ route('notifications.markRead') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("2. Server Response:", data); // Debug
+
+            if (data.success) {
+                console.log("3. Updating UI..."); // Debug
+                const badge = document.getElementById('notify-badge-id');
+                if (badge) {
+                    console.log("   - Found badge. Removing it."); // Debug
+                    badge.remove();
+                } else {
+                    console.log("   - WARNING: Could not find badge element with ID 'notify-badge-id'");
+                }
+                const listContainer = document.getElementById('notify-list-container');
+                if(listContainer) {
+                    const unreadItems = listContainer.querySelectorAll('.unread');
+                    console.log("   - Found " + unreadItems.length + " unread items.");
+
+                    unreadItems.forEach(item => {
+                        item.classList.remove('unread');
+                        item.style.backgroundColor = '#ffffff';
+                    });
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    document.addEventListener('click', function(event) {
+        const wrapper = document.querySelector('.notify-wrapper');
+        const dropdown = document.getElementById('notificationDropdown');
+        
+        if (wrapper && dropdown && !wrapper.contains(event.target)) {
+            dropdown.style.display = 'none';
+            const icon = document.querySelector('.notify-icon-container');
+            if(icon) icon.classList.remove('active');
+        }
+    });
+</script>
 
 </body>
 </html>

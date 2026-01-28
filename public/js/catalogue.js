@@ -86,3 +86,26 @@ let currentDate = new Date();
      
         document.getElementById('displayStart').classList.add('active');
         renderCalendar();
+
+        function toggleNotifications() {
+        const dropdown = document.getElementById('notificationDropdown');
+        const icon = document.querySelector('.notify-icon-container');
+        
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
+            icon.classList.remove('active');
+        } else {
+            dropdown.style.display = 'block';
+            icon.classList.add('active');
+        }
+    }
+    
+    document.addEventListener('click', function(event) {
+        const wrapper = document.querySelector('.notify-wrapper');
+        const dropdown = document.getElementById('notificationDropdown');
+        
+        if (wrapper && !wrapper.contains(event.target)) {
+            dropdown.style.display = 'none';
+            document.querySelector('.notify-icon-container').classList.remove('active');
+        }
+    });

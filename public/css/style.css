@@ -244,3 +244,83 @@ a { text-decoration: none; color: inherit; transition: 0.2s; }
     .sidebar { width: 100%; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
 }
+
+
+.notify-wrapper {
+    position: relative; /* Anchor for the dropdown */
+    margin-right: 15px;
+}
+
+.notify-icon-container {
+    position: relative;
+    width: 40px; height: 40px;
+    background: #f1f5f9; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.2s;
+    user-select: none;
+}
+.notify-icon-container:hover, .notify-icon-container.active { background: #e2e8f0; }
+.notify-icon-container i { font-size: 18px; color: #1e293b; }
+
+/* The Red Badge */
+.notify-badge {
+    position: absolute; top: -2px; right: -2px;
+    background: #ef4444; color: white;
+    font-size: 10px; font-weight: 800;
+    padding: 2px 5px; border-radius: 10px;
+    border: 2px solid white;
+    min-width: 18px; text-align: center;
+}
+
+/* The Dropdown Menu (Facebook Style) */
+.notify-dropdown {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 50px; right: -10px;
+    width: 320px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px -5px rgba(0,0,0,0.15);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+
+.notify-header {
+    padding: 15px; border-bottom: 1px solid #f1f5f9;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.notify-header h4 { font-size: 16px; font-weight: 700; color: #1e293b; }
+.mark-read { font-size: 12px; color: #059669; cursor: pointer; font-weight: 600; }
+.mark-read:hover { text-decoration: underline; }
+
+
+.notify-list { max-height: 300px; overflow-y: auto; }
+
+
+.notify-item {
+    background-color: white;
+    display: flex;
+    align-items: start;
+    gap: 12px;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f8fafc;
+    transition: 0.1s; cursor: pointer;
+}
+.notify-item:hover { background: #f8fafc; }
+.notify-item.unread { background: #f0fdf4; }
+
+.n-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #e2e8f0; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.n-icon.success { background: #dcfce7; color: #166534; }
+.n-icon.warning { background: #ffedd5; color: #9a3412; }
+
+.n-content { display: flex; flex-direction: column; }
+.n-msg { font-size: 13px; color: #334155; line-height: 1.4; }
+.n-time { font-size: 11px; color: #94a3b8; margin-top: 4px; font-weight: 600; }
+
+.empty-state { padding: 30px; text-align: center; color: #94a3b8; font-size: 13px; }

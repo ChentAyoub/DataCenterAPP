@@ -50,14 +50,19 @@
           <td><span class="badge pending">pending</span></td>
           <td>
             <div class="actions">
-              <form method="POST" action="{{ route('reservation.approve', $r->id) }}">
-                @csrf @method('PATCH')
+              
+              <form method="POST" action="{{ route('reservations.updateStatus', $r->id) }}">
+                @csrf 
+                <input type="hidden" name="status" value="approved">
                 <button class="btn accent" type="submit"><i class="fa-solid fa-check"></i> Approve</button>
               </form>
-              <form method="POST" action="{{ route('reservation.reject', $r->id) }}">
-                @csrf @method('PATCH')
+
+              <form method="POST" action="{{ route('reservations.updateStatus', $r->id) }}">
+                @csrf 
+                <input type="hidden" name="status" value="rejected">
                 <button class="btn warning" type="submit"><i class="fa-solid fa-xmark"></i> Reject</button>
               </form>
+
             </div>
           </td>
         </tr>
@@ -88,7 +93,7 @@
           <td>{{ $res->name }}</td>
           <td><span class="badge maintenance">{{ $res->state }}</span></td>
           <td>
-            <form method="POST" action="{{ route('resources.toggle', $res->id) }}">
+            <form method="POST" action="{{ route('resource.toggle', $res->id) }}">
               @csrf @method('PATCH')
               <button class="btn primary" type="submit"><i class="fa-solid fa-arrows-rotate"></i> Toggle</button>
             </form>

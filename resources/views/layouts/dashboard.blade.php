@@ -18,7 +18,7 @@
     if ($authUser) {
         if ($authUser->role === 'admin') {
             $pendingUsers = \App\Models\User::where('role','!=','admin')
-                ->where('is_approved', false)
+                ->where('is_active', false)
                 ->orderBy('created_at','asc')
                 ->take(6)
                 ->get();
@@ -173,16 +173,19 @@
                                 <div class="notif-item-meta">{{ $r->start_time }} → {{ $r->end_time }}</div>
                             </div>
                             <div class="notif-actions">
-                                <form method="POST" action="{{ route('reservation.approve', $r->id) }}">
+                                
+                                <form method="POST" action="{{ route('reservations.updateStatus', $r->id) }}">
                                     @csrf
-                                    @method('PATCH')
+                                    <input type="hidden" name="status" value="approved">
                                     <button class="btn accent btn-small" type="submit">Approve</button>
                                 </form>
-                                <form method="POST" action="{{ route('reservation.reject', $r->id) }}">
+
+                                <form method="POST" action="{{ route('reservations.updateStatus', $r->id) }}">
                                     @csrf
-                                    @method('PATCH')
+                                    <input type="hidden" name="status" value="rejected">
                                     <button class="btn ghost btn-small" type="submit">Reject</button>
                                 </form>
+
                             </div>
                         </div>
                     @empty

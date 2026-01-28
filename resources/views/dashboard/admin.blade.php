@@ -54,7 +54,7 @@
           <td><small>{{ $u->email }}</small></td>
           <td><span class="badge">{{ $u->role }}</span></td>
           <td>
-            @if(isset($u->is_approved) && $u->is_approved)
+            @if(isset($u->is_active) && $u->is_active)
               <span class="badge approved">yes</span>
             @else
               <span class="badge pending">pending</span>
@@ -63,7 +63,7 @@
           <td><small>{{ $u->created_at->format('Y-m-d') }}</small></td>
           <td>
             <div class="actions">
-              @if(isset($u->is_approved) && !$u->is_approved)
+              @if(isset($u->is_active) && !$u->is_active)
                 <form method="POST" action="{{ route('users.approve', $u->id) }}">
                   @csrf @method('PATCH')
                   <button class="btn accent" type="submit"><i class="fa-solid fa-check"></i> Approve</button>
@@ -151,7 +151,7 @@
 @endsection
 
 @section('scripts')
-@if(isset($recent_users) && $recent_users->where('is_approved', false)->count() > 0)
+@if(isset($recent_users) && $recent_users->where('is_active', false)->count() > 0)
 <script>
   window.addEventListener('load', function(){
     const toast = document.getElementById('toast');

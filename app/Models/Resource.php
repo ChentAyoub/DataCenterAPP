@@ -16,6 +16,17 @@ class Resource extends Model
         'state'
     ];
 
+    public function markAsRead()
+    {
+        
+        Notification::where('user_id', Auth::id())
+                    ->where('is_read', false)
+                    ->update(['is_read' => true]);
+
+        return response()->json(['success' => true]);
+    }
+
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -30,4 +41,5 @@ class Resource extends Model
     {
         return $this->hasMany(Reservation::class);
     }
+
 }
