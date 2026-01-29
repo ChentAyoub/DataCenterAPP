@@ -29,12 +29,13 @@ class DashboardController extends Controller
                 'available'   => Resource::where('state', 'available')->count(),
                 'maintenance' => Resource::where('state', 'maintenance')->count(),
             ];
-            $recent_users = User::orderBy('created_at', 'desc')->take(5)->get();
+            $recent_users = User::where('role', '!=', 'admin')
+                ->orderBy('created_at', 'desc')
+                ->get();
             $pending_reservations = Reservation::where('status', 'pending')
                 ->with(['user', 'resource'])
                 ->orderBy('created_at', 'asc')
                 ->get();
-
             return view('dashboard.admin', compact('role_counts', 'resource_stats', 'recent_users', 'pending_reservations'));
         }
         
@@ -56,26 +57,18 @@ class DashboardController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        // 1. Check Permissions
+        
         if (Auth::user()->role !== 'manager' && Auth::user()->role !== 'admin') {
             abort(403);
         }
 
         $reservation = Reservation::findOrFail($id);
         $status = $request->input('status');
-
-        // --- DEBUG: STOP AND SHOW ME THE DATA ---
-        // kenIf the screen does NOT go black with this text, the form is bro.
-        // If it DOES go black, the Controller is connected perfectly.
-        // dd('Controller Reached! Status is: ' . $status); 
-        // ----------------------------------------
-
         $reservation->status = $status;
         $reservation->save();
 
         if ($status === 'approved') {
-            
-            // Create the notification
+
             Notification::create([
                 'user_id' => $reservation->user_id,
                 'message' => 'Good news! Your reservation for "' . $reservation->resource->name . '" was APPROVED.',

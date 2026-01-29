@@ -13,38 +13,45 @@ class ResourceController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Resource::query();
+        $query = \App\Models\Resource::query();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+     
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
-        if ($request->filled('search')) {
-                 $query->where('name', 'like', '%' . $request->search . '%')
-                        ->orWhere('specifications', 'like', '%' . $request->search . '%');
-             }
-             $resources = $query->orderBy('created_at', 'desc')->paginate(20);
-             $categories = Category::all();
-             $notifications = collect();
-         $unreadCount = 0;
 
-         if (Auth::check()) {
-             $notifications = Notification::where('user_id', Auth::id())
-                             ->orderBy('created_at', 'desc')
-                             ->take(10)
-                             ->get();
+        
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = $request->start_date . ' 00:00:00';
+            $end   = $request->end_date . ' 23:59:59';
+            $query->whereDoesntHave('reservations', function ($q) use ($start, $end) {
+                $q->where('status', '!=', 'rejected')
+                  ->where(function ($subQ) use ($start, $end) {
+                      $subQ->where('start_time', '<', $end)
+                           ->where('end_time', '>', $start);
+                  });
+            });
+        }
 
-             $unreadCount = Notification::where('user_id', Auth::id())
-                             ->where('is_read', false)
-                             ->count();
-         }
-
-         return view('catalogue', compact('resources', 'categories', 'notifications', 'unreadCount'));
+        $resources = $query->paginate(9);
+        $categories = \App\Models\Category::all();
+        return view('catalogue', compact('resources', 'categories'));
     }
         
 
     public function show($id)
     {
         $resource = Resource::findOrFail($id);
-        return view('resources.show', compact('resource'));
+        $bookedSlots = \App\Models\Reservation::where('resource_id', $id)
+            ->where('status', '!=', 'rejected')
+            ->where('end_time', '>', now())
+            ->get(['start_time', 'end_time']);
+
+        return view('resources.show', compact('resource', 'bookedSlots'));
     }
 
     public function manage()

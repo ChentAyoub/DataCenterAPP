@@ -26,7 +26,7 @@ class ReservationController extends Controller
             'justification' => 'Booked via Home Page',
         ]);
 
-        return back()->with('success', 'Reservation request sent successfully!');
+        return redirect()->back()->with('success', 'Reservation sent successfully! Waiting for approval. Check notifications or My Reservations page for status updates.');
     }
 
     //TODO:UPDATE RESERVATION STATUS (For Managers/Admins)

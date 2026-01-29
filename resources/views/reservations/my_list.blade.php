@@ -12,9 +12,9 @@
 
     <header class="main-header">
         <nav class="navbar">
-             <a href="/welcome" class="pro-logo"><img src="{{ asset('images/logo1NBG.png') }}" alt="DataCenter Logo" class="logo-image" style="height:100px; vertical-align:middle;"></a>
+             <a href="/" class="pro-logo"><img src="{{ asset('images/logo1NBG.png') }}" alt="DataCenter Logo" class="logo-image" style="height:100px; vertical-align:middle;"></a>
             <div class="user-menu">
-                <a href="/" class="nav-link">⬅ Back</a>
+                <a href="catalogue" class="nav-link">⬅ Back</a>
                 <form action="{{ route('logout') }}" method="POST" class="logout-form">
                     @csrf 
                     <button class="btn-logout">Logout</button>

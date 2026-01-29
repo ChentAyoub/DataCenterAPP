@@ -54,7 +54,8 @@
           <td><small>{{ $u->email }}</small></td>
           <td><span class="badge">{{ $u->role }}</span></td>
           <td>
-            @if(isset($u->is_active) && $u->is_active)
+            {{-- CORRECTED: Using your actual DB column 'is_active' --}}
+            @if($u->is_active)
               <span class="badge approved">yes</span>
             @else
               <span class="badge pending">pending</span>
@@ -63,7 +64,9 @@
           <td><small>{{ $u->created_at->format('Y-m-d') }}</small></td>
           <td>
             <div class="actions">
-              @if(isset($u->is_active) && !$u->is_active)
+              
+              {{-- CORRECTED: Show buttons if 'is_active' is false (0) --}}
+              @if(!$u->is_active)
                 <form method="POST" action="{{ route('users.approve', $u->id) }}">
                   @csrf @method('PATCH')
                   <button class="btn accent" type="submit"><i class="fa-solid fa-check"></i> Approve</button>

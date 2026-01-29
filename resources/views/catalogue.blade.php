@@ -7,20 +7,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <script src="{{ asset('js/catalogue.js') }}" defer></script>
+    
 </head>
 <body>
 
     <nav class="pro-navbar">
         <a href="/" class="pro-logo"><img src="{{ asset('images/logo1NBG.png') }}" alt="DataCenter Logo" class="logo-image" style="height:100px; vertical-align:middle;"></a>
         <div class="pro-menu">
+            @auth
+            <span style="margin-right: 15px; font-weight: bold; color: #333;">Hello, {{ Auth::user()->name }}</span>
+            @endauth
             <a href="/" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
             @auth
                 <a href="#" class="nav-btn warning"><i class="fa-solid fa-triangle-exclamation"></i> Reclamations</a>
                 @if(Auth::user()->role === 'admin')
                     <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-wrench"></i> Admin Panel</a>
                 @elseif(Auth::user()->role === 'manager')
-                    <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-bolt"></i> Manager Dash</a>
-               @else
+                    <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-bolt"></i> Manager P</a>
+                @else
+                <a href="{{ route('dashboard') }}" class="nav-btn primary">
+                     <i class="fa-solid fa-calendar-check"></i> My Reservations
+                 </a>
                 <div class="notify-wrapper">
                    <div class="notify-icon-container" onclick="toggleNotifications()">
                        <i class="fa-solid fa-bell"></i>
@@ -28,28 +35,16 @@
                            <span class="notify-badge" id="notify-badge-id">{{ $unreadCount }}</span>
                        @endif
                    </div>
-
                    <div class="notify-dropdown" id="notificationDropdown">
                        <div class="notify-header">
                            <h4>Notifications</h4>
                            <span class="mark-read" id="mark-read-btn" onclick="markAllAsRead()">Mark all read</span>
                        </div>
-
                        <div class="notify-list" id="notify-list-container">
                            @if(isset($notifications) && $notifications->count() > 0)
                                @foreach($notifications as $notify)
                                    <div class="notify-item {{ $notify->is_read ? '' : 'unread' }}" id="notify-item-{{ $notify->id }}">
-                                       <div class="n-icon {{ $notify->type == 'success' ? 'success' : 'warning' }}">
-                                           @if($notify->type == 'success')
-                                               <i class="fa-solid fa-check"></i>
-                                           @else
-                                               <i class="fa-solid fa-info"></i>
-                                           @endif
-                                       </div>
-                                       <div class="n-content">
-                                           <span class="n-msg">{{ $notify->message }}</span>
-                                           <span class="n-time">{{ $notify->created_at->diffForHumans() }}</span>
-                                       </div>
+                                       <div class="n-content"><span class="n-msg">{{ $notify->message }}</span></div>
                                    </div>
                                @endforeach
                            @else
@@ -58,10 +53,6 @@
                        </div>
                    </div>
                 </div>
-
-                 <a href="{{ route('dashboard') }}" class="nav-btn primary">
-                     <i class="fa-solid fa-calendar-check"></i> My Reservations
-                 </a>
             @endif
                 <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                     @csrf 
@@ -73,22 +64,42 @@
             @endauth
         </div>
     </nav>
+    
+    @auth
+        @if(!Auth::user()->fresh()->is_active)
+            <div style="background-color: #fff3cd; color: #856404; padding: 15px; text-align: center; border-bottom: 1px solid #ffeeba; font-weight: bold; width: 100%;">
+                <i class="fa-solid fa-lock"></i> 
+                Your account is currently <u>PENDING APPROVAL</u>. You cannot reserve resources until an Admin activates your account.
+            </div>
+        @endif
+    @endauth
 
     <div class="app-container">
         
         <aside class="sidebar">
-            <form action="/" method="GET" id="filterForm">
+            <form action="{{ route('catalogue') }}" method="GET" id="filterForm">
+                
                 <div class="filter-group">
-                    <h3>Select Date</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>Select Date</h3>
+                        @if(request('start_date'))
+                            <a href="{{ route('catalogue', request()->except(['start_date', 'end_date'])) }}" style="font-size:12px; color:#ef4444; text-decoration:none;">Clear Dates</a>
+                        @endif
+                    </div>
+                    
                     <div class="calendar-widget">
                         <div class="cal-inputs">
                             <div class="cal-input-group">
                                 <span class="cal-label">From</span>
-                                <div id="displayStart" class="cal-display" onclick="setPickMode('start')">--/--</div>
+                                <div id="displayStart" class="cal-display" onclick="setPickMode('start')">
+                                    {{ request('start_date') ? date('m/d', strtotime(request('start_date'))) : '--/--' }}
+                                </div>
                             </div>
                             <div class="cal-input-group">
                                 <span class="cal-label">To</span>
-                                <div id="displayEnd" class="cal-display" onclick="setPickMode('end')">--/--</div>
+                                <div id="displayEnd" class="cal-display" onclick="setPickMode('end')">
+                                    {{ request('end_date') ? date('m/d', strtotime(request('end_date'))) : '--/--' }}
+                                </div>
                             </div>
                         </div>
                         <input type="hidden" name="start_date" id="realStart" value="{{ request('start_date') }}">
@@ -97,7 +108,6 @@
                             <div class="cal-nav" onclick="changeMonth(-1)">❮</div>
                             <div class="cal-month" id="calMonthYear">January 2026</div>
                             <div class="cal-nav" onclick="changeMonth(1)">❯</div>
-                            <button type="button" class="btn-today" onclick="goToToday()">Today</button>
                         </div>
                         <div class="cal-grid">
                             <div class="cal-day-name">Mo</div><div class="cal-day-name">Tu</div><div class="cal-day-name">We</div>
@@ -108,7 +118,8 @@
                         <button type="submit" class="btn-apply-filters">Apply Dates</button>
                     </div>
                 </div>
-                <br><br>
+                <br>
+
                 <div class="filter-group">
                     <h3>Categories</h3>
                     <div class="cat-list">
@@ -124,6 +135,12 @@
                         @endforeach
                     </div>
                 </div>
+
+                @if(request()->anyFilled(['search', 'category_id', 'start_date', 'end_date']))
+                    <a href="{{ route('catalogue') }}" class="btn-reset-sidebar">
+                        <i class="fa-solid fa-rotate-left"></i> Reset All Filters
+                    </a>
+                @endif
             </form>
         </aside>
 
@@ -135,10 +152,48 @@
                 <input type="text" form="filterForm" name="search" class="top-search" placeholder="Search resources..." value="{{ request('search') }}">
             </div>
 
+            @if(request()->anyFilled(['search', 'category_id', 'start_date']))
+                <div class="filter-status">
+                    <div class="filter-group-tags">
+                        <i class="fa-solid fa-filter"></i> <strong>Active Filters:</strong>
+                        
+                        @if(request('search'))
+                            <span class="filter-tag">
+                                <i class="fa-solid fa-magnifying-glass"></i> "{{ request('search') }}"
+                            </span>
+                        @endif
+
+                        @if(request('category_id'))
+                            @php 
+                                $activeCat = $categories->firstWhere('id', request('category_id')); 
+                            @endphp
+                            @if($activeCat)
+                                <span class="filter-tag">
+                                    <i class="fa-solid fa-tag"></i> {{ $activeCat->name }}
+                                </span>
+                            @endif
+                        @endif
+
+                        @if(request('start_date') && request('end_date'))
+                            <span class="filter-tag">
+                                <i class="fa-regular fa-calendar"></i> 
+                                {{ date('M d', strtotime(request('start_date'))) }} - {{ date('M d', strtotime(request('end_date'))) }}
+                            </span>
+                        @endif
+                    </div>
+
+                    <a href="{{ route('catalogue') }}" class="btn-reset-link">Clear All</a>
+                </div>
+            @endif
+
             @if($resources->isEmpty())
                 <div style="text-align:center; padding:50px; color:#999;">
+                    <div style="font-size: 50px; margin-bottom: 20px;"><i class="fa-solid fa-box-open"></i></div>
                     <h3>No resources found</h3>
-                    <p>Try adjusting your filters.</p>
+                    <p>Try clearing your filters to see more results.</p>
+                    <a href="{{ route('catalogue') }}" class="card-btn" style="background: #0f172a; color: white; display: inline-block; width: auto; padding: 10px 20px; margin-top: 20px;">
+                        Reset Filters
+                    </a>
                 </div>
             @else
                 <div class="card-grid">
@@ -160,40 +215,55 @@
                             
                             <div class="card-actions">
                                 @auth
+                                    {{-- ADMIN --}}
                                     @if(Auth::user()->role === 'admin')
-                                        <div style="display:flex; gap:10px;">
+                                        <div style="display:flex; gap:10px; width:100%;">
                                             <a href="{{ route('resources.edit', $resource->id) }}" style="flex:1;">
-                                                <button class="card-btn" style="background:#fff; border:1px solid #ddd; color:#333;">Edit</button>
+                                                <button class="card-btn" style="background:#fff; border:1px solid #ddd; color:#333; width:100%;">Edit</button>
                                             </a>
                                             <form action="{{ route('resource.destroy', $resource->id) }}" method="POST" onsubmit="return confirm('Delete?');" style="flex:1;">
                                                 @csrf @method('DELETE')
-                                                <button class="card-btn" style="background:#fee2e2; color:#b91c1c;">Delete</button>
+                                                <button class="card-btn" style="background:#fee2e2; color:#b91c1c; width:100%;">Delete</button>
                                             </form>
                                         </div>
 
+                                    {{-- MANAGER --}}
                                     @elseif(Auth::user()->role === 'manager')
-                                        <div style="display:flex; gap:10px;">
+                                        <div style="display:flex; gap:10px; width:100%;">
                                             <a href="{{ route('resources.edit', $resource->id) }}" style="flex:1;">
-                                                <button class="card-btn" style="background:#fff; border:1px solid #ddd; color:#333;">Edit</button>
+                                                <button class="card-btn" style="background:#fff; border:1px solid #ddd; color:#333; width:100%;">Edit</button>
                                             </a>
                                             <form action="{{ route('resource.toggle', $resource->id) }}" method="POST" style="flex:1;">
                                                 @csrf @method('PATCH')
-                                                <button class="card-btn" style="background:#fff7ed; color:#c2410c;">
+                                                <button class="card-btn" style="background:#fff7ed; color:#c2410c; width:100%;">
                                                     {{ $resource->state == 'available' ? 'Flag' : 'Fix' }}
                                                 </button>
                                             </form>
                                         </div>
 
+                                    {{-- STUDENT --}}
                                     @else
-                                        <a href="{{ route('resources.show', ['id' => $resource->id]) }}" class="card-btn">
-                                            {{ $resource->state == 'available' ? 'Reserve Now' : 'View Details' }}
-                                        </a>
+                                        @if(!Auth::user()->fresh()->is_active)
+                                            <button class="btn-disabled" disabled title="Wait for Admin Approval">
+                                                <i class="fa-solid fa-lock"></i> Approval Pending
+                                            </button>
+                                        @else
+                                            @if($resource->state == 'available')
+                                                <a href="{{ route('resources.show', $resource->id) }}" class="card-btn green">
+                                                    Reserve Now
+                                                </a>
+                                            @else
+                                                <button class="card-btn grey" disabled>
+                                                    Maintenance
+                                                </button>
+                                            @endif
+                                        @endif
                                     @endif
                                 @else
                                     <a href="{{ route('login') }}" class="card-btn">Login to Reserve</a>
                                 @endauth
                             </div>
-                            </div>
+                        </div>
                     </div>
                     @endforeach
                 </div>
@@ -224,11 +294,9 @@
             <div class="footer-col">
                 <h5>Navigation</h5>
                 <a href="{{ url('/catalogue') }}">Catalogue</a>
-                <a href="#">My Reservations</a>
             </div>
             <div class="footer-col">
                 <h5>Legal</h5>
-                <a href="#">Usage Rules</a>
                 <a href="#">Privacy Policy</a>
             </div>
             <div class="footer-col">
@@ -237,74 +305,54 @@
             </div>
         </div>
         <div class="footer-bottom">&copy; 2026 DigitalCenter. All rights reserved.</div>
- 
     </footer>
 
-
-
-
-<script>
-
-    function toggleNotifications() {
-        const dropdown = document.getElementById('notificationDropdown');
-        const icon = document.querySelector('.notify-icon-container');
-        
-        if (dropdown.style.display === 'block') {
-            dropdown.style.display = 'none';
-            icon.classList.remove('active');
-        } else {
-            dropdown.style.display = 'block';
-            icon.classList.add('active');
-        }
-    }
-
-    function markAllAsRead() {
-        console.log("1. Starting Mark Read process..."); // Debug
-        fetch("{{ route('notifications.markRead') }}", {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Content-Type": "application/json"
+    <script>
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const icon = document.querySelector('.notify-icon-container');
+            
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                icon.classList.remove('active');
+            } else {
+                dropdown.style.display = 'block';
+                icon.classList.add('active');
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("2. Server Response:", data); // Debug
+        }
 
-            if (data.success) {
-                console.log("3. Updating UI..."); // Debug
-                const badge = document.getElementById('notify-badge-id');
-                if (badge) {
-                    console.log("   - Found badge. Removing it."); // Debug
-                    badge.remove();
-                } else {
-                    console.log("   - WARNING: Could not find badge element with ID 'notify-badge-id'");
+        function markAllAsRead() {
+            fetch("{{ route('notifications.markRead') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
                 }
-                const listContainer = document.getElementById('notify-list-container');
-                if(listContainer) {
-                    const unreadItems = listContainer.querySelectorAll('.unread');
-                    console.log("   - Found " + unreadItems.length + " unread items.");
-
-                    unreadItems.forEach(item => {
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const badge = document.getElementById('notify-badge-id');
+                    if (badge) badge.remove();
+                    
+                    document.querySelectorAll('.unread').forEach(item => {
                         item.classList.remove('unread');
                         item.style.backgroundColor = '#ffffff';
                     });
                 }
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-    document.addEventListener('click', function(event) {
-        const wrapper = document.querySelector('.notify-wrapper');
-        const dropdown = document.getElementById('notificationDropdown');
-        
-        if (wrapper && dropdown && !wrapper.contains(event.target)) {
-            dropdown.style.display = 'none';
-            const icon = document.querySelector('.notify-icon-container');
-            if(icon) icon.classList.remove('active');
+            })
+            .catch(error => console.error('Error:', error));
         }
-    });
-</script>
+
+        document.addEventListener('click', function(event) {
+            const wrapper = document.querySelector('.notify-wrapper');
+            const dropdown = document.getElementById('notificationDropdown');
+            if (wrapper && dropdown && !wrapper.contains(event.target)) {
+                dropdown.style.display = 'none';
+                document.querySelector('.notify-icon-container')?.classList.remove('active');
+            }
+        });
+    </script>
 
 </body>
 </html>
