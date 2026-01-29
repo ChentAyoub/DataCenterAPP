@@ -10,7 +10,7 @@ For a detailed technical analysis, including the database schema, system archite
 👉 **[Read the Full Project Report (Google Docs)](https://docs.google.com/document/d/1OSgUkANkaeluCtigevD-tw7iFbGHAKj6h0wnrjkiNDU/edit?usp=sharing)**
 
 ### Report Highlights:
-* [cite_start]**Database Modeling (MLD):** Detailed breakdown of entity relationships for the 70+ resources.
+* [cite_start]**Database Modeling (MLD):** Detailed breakdown of entity relationships for the resources.
 * [cite_start]**System Architecture:** Deep dive into the Laravel MVC file structure and custom middleware.
 * [cite_start]**Technical Choices:** Justification for using Laravel 12.x, PHP 8.2+, and MySQL.
 * [cite_start]**Future Perspectives:** Roadmap for PDF reporting and API RESTful integration.
