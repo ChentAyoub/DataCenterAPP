@@ -59,7 +59,7 @@ class ResourceController extends Controller
         if (Auth::user()->role === 'internal_user') abort(403, 'Unauthorized.');
         $resources = Resource::with('category')->orderBy('created_at', 'desc')->paginate(10);
         
-        return view('resources.manage', compact('resources'));
+        return view('resources.edit', compact('resources'));
     }
 
     public function create()
@@ -127,7 +127,7 @@ class ResourceController extends Controller
 
         $resource->update($validated);
 
-        return redirect()->route('resources.manage')->with('success', 'Item updated successfully!');
+        return redirect()->route('catalogue')->with('success', 'Item updated successfully!');
     }
 
     public function toggleMaintenance($id)

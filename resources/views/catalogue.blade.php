@@ -19,7 +19,9 @@
             @endauth
             <a href="/" class="nav-btn"><i class="fa-solid fa-house"></i> Home</a>
             @auth
-                <a href="#" class="nav-btn warning"><i class="fa-solid fa-triangle-exclamation"></i> Reclamations</a>
+               <a href="#" id="reclamationBtn" class="nav-btn warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Reclamations
+                </a>
                 @if(Auth::user()->role === 'admin')
                     <a href="{{ route('dashboard') }}" class="nav-btn primary"><i class="fa-solid fa-wrench"></i> Admin Panel</a>
                 @elseif(Auth::user()->role === 'manager')
@@ -73,6 +75,45 @@
             </div>
         @endif
     @endauth
+
+    <div class="modal-overlay" id="reclamationModal" aria-hidden="true">
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="reclamationTitle">
+            <div class="modal-header">
+                <h3 id="reclamationTitle">New Reclamation</h3>
+                <button type="button" class="icon-btn" id="reclamationClose" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form method="POST" action="{{ route('reclamations.store') }}" class="modal-body">
+                @csrf
+                <div class="form-row">
+                    <label for="reclamationSubject">Subject</label>
+                    <input id="reclamationSubject" name="subject" type="text" required maxlength="120" placeholder="Short title" />
+                </div>
+                <div class="form-row">
+                    <label for="reclamationCategory">Category</label>
+                    <input id="reclamationCategory" name="category" type="text" maxlength="60" placeholder="Hardware, Access, Network..." />
+                </div>
+                <div class="form-row">
+                    <label for="reclamationPriority">Priority</label>
+                    <select id="reclamationPriority" name="priority" required>
+                        <option value="low">Low</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="reclamationMessage">Message</label>
+                    <textarea id="reclamationMessage" name="message" rows="5" maxlength="1000" required placeholder="Describe the issue..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn ghost" id="reclamationCancel">Cancel</button>
+                    <button type="submit" class="btn primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="app-container">
         
@@ -253,8 +294,8 @@
                                                     Reserve Now
                                                 </a>
                                             @else
-                                                <button class="card-btn grey" disabled>
-                                                    Maintenance
+                                                <button class="btn-disabled" disabled>
+                                                    <i class="fa-solid fa-screwdriver-wrench"></i> Maintenance
                                                 </button>
                                             @endif
                                         @endif
@@ -308,6 +349,58 @@
     </footer>
 
     <script>
+        const reclamationBtn = document.getElementById('reclamationBtn');
+        const reclamationModal = document.getElementById('reclamationModal');
+        const reclamationClose = document.getElementById('reclamationClose');
+        const reclamationCancel = document.getElementById('reclamationCancel');
+
+        function openReclamationModal() {
+            if (!reclamationModal) return;
+            reclamationModal.classList.add('open');
+            reclamationModal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+            const firstInput = reclamationModal.querySelector('input, textarea, select');
+            if (firstInput) firstInput.focus();
+        }
+
+        function closeReclamationModal() {
+            if (!reclamationModal) return;
+            reclamationModal.classList.remove('open');
+            reclamationModal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('modal-open');
+        }
+
+        if (reclamationBtn) {
+            reclamationBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+                openReclamationModal();
+            });
+        }
+
+        if (reclamationClose) {
+            reclamationClose.addEventListener('click', closeReclamationModal);
+        }
+
+        if (reclamationCancel) {
+            reclamationCancel.addEventListener('click', closeReclamationModal);
+        }
+
+        if (reclamationModal) {
+            reclamationModal.addEventListener('click', function (event) {
+                if (event.target === reclamationModal) {
+                    closeReclamationModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeReclamationModal();
+            }
+        });
+
+
+
         function toggleNotifications() {
             const dropdown = document.getElementById('notificationDropdown');
             const icon = document.querySelector('.notify-icon-container');

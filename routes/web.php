@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ReclamationController;
 
     Route::get('/', function () {
         return view('welcome');
@@ -18,6 +19,8 @@ use App\Http\Controllers\UserController;
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::view('/usage-rules', 'rules.usage-rules')->name('usage-rules');
     Route::view('/privacy-policy', 'rules.privacy-policy')->name('privacy-policy');
+
+
     Route::middleware('auth')->group(function () {
         Route::get('/admin/dashboard', function () {
             return redirect()->route('dashboard');
@@ -29,7 +32,7 @@ use App\Http\Controllers\UserController;
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reservation.store');
     Route::delete('/reservation/{id}', [ReservationController::class, 'destroy'])->name('reservation.destroy');
     Route::get('/resources/manage', [ResourceController::class, 'manage'])->name('resources.manage');
-    Route::get('/resources/create', [ResourceController::class, 'create'])->name('resources.create'); // <--- Must be before {id}
+    Route::get('/resources/create', [ResourceController::class, 'create'])->name('resources.create');
     Route::post('/resources', [ResourceController::class, 'store'])->name('resources.store');
     Route::get('/resources/{id}/edit', [ResourceController::class, 'edit'])->name('resources.edit');
     Route::put('/resources/{id}', [ResourceController::class, 'update'])->name('resources.update');
@@ -42,6 +45,10 @@ use App\Http\Controllers\UserController;
     Route::post('/reservations/{id}/status', [DashboardController::class, 'updateStatus'])->name('reservations.updateStatus');
     Route::patch('/reservation/{id}/approve', [ReservationController::class, 'approve'])->name('reservation.approve');
     Route::patch('/reservation/{id}/reject', [ReservationController::class, 'reject'])->name('reservation.reject');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/mark-read', [ResourceController::class, 'markAsRead'])->name('notifications.markRead');
+    Route::get('/resources/{id}/edit', [ResourceController::class, 'edit'])->name('resources.edit');
+    Route::put('/resources/{id}', [ResourceController::class, 'update'])->name('resources.update');
+    Route::post('/reclamations', [ReclamationController::class, 'store'])->name('reclamations.store');
 });
 Route::get('/resources/{id}', [ResourceController::class, 'show'])->name('resources.show');

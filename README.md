@@ -1,59 +1,158 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏢 DataCenter: IT Infrastructure Management System
+![alt text](3.png)![alt text](2.png)
+### 📌 Project Overview
+**Digital Center** is a professional web application built with **Laravel 12.x**, designed for the seamless management of enterprise IT resources. It allows students and researchers to browse high-end hardware, manage reservations through an interactive calendar, and provides administrators with a robust suite of tools for inventory control and maintenance tracking.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+---
 
-## About Laravel
+### ✨ Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+* 🔐 **User Authentication:** Secure login & registration with role-based redirection.
+* 🎭 **Role-Based Access Control (RBAC):** Distinct permissions for **Admins**, **Managers**, and **Students**.
+* 📅 **Custom Reservation System:** A tailor-made calendar widget for precise date-range selection.
+* 🛠 **Inventory Management:** Complete CRUD suite for hardware assets, including real-time "Maintenance Mode" toggling.
+* 🔔 **Live Notifications:** Feedback system for reservation approvals, rejections, and account activation.
+* 📨 **AJAX Reclamation System:** Interactive modal for users to report technical issues directly to managers.
+* 📁 **Asset Storage:** Centralized image handling using Laravel’s filesystem and symbolic linking.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🖥️ Presentation of the Project
 
-## Learning Laravel
+![alt text](image.png)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+![alt text](image-1.png)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+![alt text](image-2.png)
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+*The gateway to the infrastructure.*
+* A **Pro-Navbar** with dynamic links based on user role.
+* A **Grid Layout** showcasing 70+ real-world enterprise products (Dell, Cisco, HPE).
+* **Status Badges:** Visual indicators for "Available" vs "Maintenance" states.
 
-### Premium Partners
+![alt text](image-3.png)
+**catalogue**
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+**guest view** 
+![alt text](image-4.png)
 
-## Contributing
+**Internal user pending account view**
+![alt text](image-6.png)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**Internal user verified account view**
+![alt text](image-7.png)
+![alt text](image-16.png)
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### **Resource Management (Admin/Manager)**
+*The control center for the Data Center inventory.*
+* A structured **Data Table** displaying all hardware assets.
+* Quick actions for **Editing**, **Deleting**, or **Flagging** items for repair.
+* Pagination handled on the server side for optimized performance.
 
-## Security Vulnerabilities
+**Manager Dashboard**
+![alt text](image-9.png)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Admin Dashboard**
+![alt text](image-10.png)
 
-## License
+#### **Edit & Create Resource**
+* Secure forms with **Multi-part Form Data** support for image uploads.
+* Category selection via dynamic dropdowns linked to the database.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+![alt text](image-11.png)
+![alt text](image-12.png)
+
+#### **Custom Reservation Calendar**
+* An interactive **Sidebar Widget** allowing users to pick "From" and "To" dates.
+* Logic to prevent reservations of items currently marked for maintenance.
+
+![alt text](image-13.png)
+![alt text](image-14.png)
+
+#### **Reclamation & Support Modal**
+* A clean **Overlay Modal** for submitting support tickets.
+* Fields for Subject, Category, Priority, and Message to ensure clear communication.
+
+![alt text](image-15.png)
+
+---
+
+### 🏗️ Technical Architecture
+
+The project leverages the **Model-View-Controller (MVC)** pattern to ensure scalability:
+* **Eloquent ORM:** Manages complex relationships between `Users`, `Resources`, `Categories`, and `Reservations`.
+* **Middleware:** Custom security layers to protect Admin and Manager routes.
+* **Database Seeders:** Automated generation of 70+ unique enterprise products.
+
+
+
+---
+
+### 🚀 Installation Guide
+
+#### **Prerequisites**
+Ensure you have the following installed:
+* **PHP 8.2+** & **Composer**
+* **MySQL**
+* **Node.js & NPM**
+
+#### **Setup Instructions**
+
+1. **Clone the repository:**
+    ```bash
+        git clone [https://github.com/your-username/DataCenterApp.git](https://github.com/your-username/DataCenterApp.git)
+        cd DataCenterApp
+
+2. **Install dependencies:**
+    ```bash
+        composer install
+        npm install && npm run build
+
+3. **Configure environment:**
+    ```bash
+        cp .env.example .env
+        php artisan key:generate
+
+4. **Database setup**
+    ```bash
+        php artisan migrate:fresh --seed --seeder=ResourceSeeder
+
+5. **Link storage for images:**
+    ```bash
+        php artisan storage:link
+
+6. **Install dependencies:**
+    ```bash
+        php artisan serve
+
+### 🎓 Project Supervised By:
+* M. Aitkbir Mhamed
+* M. Elyussufi Yassyn
+
+---
+
+### 🔥 Challenges Faced
+* Security in Role Management: Ensuring only authorized users can access specific features like the Admin Panel.
+* Database Constraints: Managing ENUM types for reservation statuses and handling data truncation during migrations.
+* Content Access Control: Managing hardware resources dynamically based on user roles and account approval status.
+
+---
+
+### 🚀 Future Enhancements
+* Automated Role Testing: Improve security testing for access control layers.
+* Subscription Analytics: Provide insights into hardware usage and engagement.
+* API Support: Allow third-party integrations for monitoring tool updates.
+
+---
+
+### 📜 License
+This project is licensed under the MIT License.
+
+### 👥 Credits
+Developed by:
+* [Ayoub Chentouf]
+* [Ayoub hmamouchi]
+* [Charaf Eddine Ifrinchaou]
+* **GRP 14**

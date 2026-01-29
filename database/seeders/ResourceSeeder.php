@@ -11,40 +11,48 @@ use Illuminate\Support\Facades\Hash;
 
 class ResourceSeeder extends Seeder
 {
-    public function run()
-    {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Resource::truncate();
-        Category::truncate(); 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        $manager = User::firstOrCreate(
-            ['email' => 'manager@datacenter.com'],
-            [
-                'name' => 'Mr. Manager',
-                'password' => Hash::make('password'),
-                'role' => 'manager'
-            ]
-        );
+  public function run(): void
+{
+    $admin = \App\Models\User::create([
+        'name' => 'Admin User',
+        'email' => 'admin@datacenter.com',
+        'password' => bcrypt('password'),
+        'role' => 'admin',
+        'is_approved' => true,
+    ]);
+    $cats = [
+        'Rack Servers' => \App\Models\Category::create(['name' => 'Rack Servers']),
+        'Networking'   => \App\Models\Category::create(['name' => 'Networking']),
+        'Storage'      => \App\Models\Category::create(['name' => 'Storage']),
+        'Security'     => \App\Models\Category::create(['name' => 'Security']),
+        'Workstations' => \App\Models\Category::create(['name' => 'Workstations']),
+    ];
 
-        $categories = ['Server', 'Router', 'Switch', 'Cabling'];
+    $brands = [
+        'Rack Servers' => [
+            ['name' => 'Dell PowerEdge R', 'specs' => 'Intel Xeon, DDR4 ECC, IDRAC9'],
+            ['name' => 'HPE ProLiant DL', 'specs' => 'AMD EPYC, 128GB RAM, SmartArray'],
+            ['name' => 'Lenovo ThinkSystem SR', 'specs' => 'Dual Intel Xeon, NVMe Hot-swap']
+        ],
+    ];
 
-        foreach ($categories as $catName) {
+    foreach ($brands as $categoryName => $models) {
+        $catId = $cats[$categoryName]->id;
+        
+        for ($i = 1; $i <= 14; $i++) {
+            $template = $models[array_rand($models)];
+            $modelNumber = 100 + ($i * 10); 
             
-            $category = Category::create([
-                'name' => $catName,
-                'description' => "All available $catName equipment."
+            \App\Models\Resource::create([
+                'category_id'    => $catId,
+                'manager_id'     => $admin->id,
+                'name'           => $template['name'] . $modelNumber,
+                'specifications' => $template['specs'] . ", Unit #" . $i,
+                'description'    => "Professional enterprise-grade hardware for high-demand $categoryName workloads.",
+                'state'          => (rand(1, 10) > 2) ? 'available' : 'maintenance',
+                'image'          => null,
             ]);
-            for ($i = 1; $i <= 5; $i++) {
-                Resource::create([
-                    'category_id' => $category->id,
-                    'manager_id' => $manager->id,
-                    'name' => "$catName Model-" . rand(100, 999), 
-                    'specifications' => 'Standard Lab Config (8GB RAM, 256GB SSD)',
-                    'description' => "This is a dummy description for the $catName. Great for testing layouts.",
-                    'state' => rand(0, 1) ? 'available' : 'maintenance',
-                    'image' => null, 
-                ]);
-            }
         }
     }
+}
 }
