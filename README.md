@@ -3,6 +3,17 @@
 ### 📌 Project Overview
 **Digital Center** is a professional web application built with **Laravel 12.x**, designed for the seamless management of enterprise IT resources. It allows students and researchers to browse high-end hardware, manage reservations through an interactive calendar, and provides administrators with a robust suite of tools for inventory control and maintenance tracking.
 
+## 📖 Project Documentation
+
+For a detailed technical analysis, including the database schema, system architecture (MVC), and complete functional overview, please refer to the official project report:
+
+👉 **[Read the Full Project Report (Google Docs)](https://docs.google.com/document/d/1OSgUkANkaeluCtigevD-tw7iFbGHAKj6h0wnrjkiNDU/edit?usp=sharing)**
+
+### Report Highlights:
+* [cite_start]**Database Modeling (MLD):** Detailed breakdown of entity relationships for the 70+ resources.
+* [cite_start]**System Architecture:** Deep dive into the Laravel MVC file structure and custom middleware.
+* [cite_start]**Technical Choices:** Justification for using Laravel 12.x, PHP 8.2+, and MySQL.
+* [cite_start]**Future Perspectives:** Roadmap for PDF reporting and API RESTful integration.
 ---
 
 ### ✨ Features
