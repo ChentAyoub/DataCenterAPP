@@ -15,6 +15,12 @@ For a detailed technical analysis, including the database schema, system archite
 * [cite_start]**Technical Choices:** Justification for using Laravel 12.x, PHP 8.2+, and MySQL.
 * [cite_start]**Future Perspectives:** Roadmap for PDF reporting and API RESTful integration.
 ---
+## 🎥 Video Demonstration
+
+Check out the full walkthrough of the **Digital Center** application, covering the authentication flow, resource reservation, and the Manager's dashboard.
+
+[![Watch the Video](https://img.shields.io/badge/YouTube-Video_Walkthrough-red?style=for-the-badge&logo=youtube)]((https://youtu.be/eO7RSLNeD8k))
+
 
 ### ✨ Features
 
