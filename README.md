@@ -1,4 +1,4 @@
-# 🏢 DataCenter: IT Infrastructure Management System
+# 🏢 Digital Center : Your gateway to advanced computing resources.
 ![alt text](<Add a subheading (2).png>)
 ### 📌 Project Overview
 **Digital Center** is a professional web application built with **Laravel 12.x**, designed for the seamless management of enterprise IT resources. It allows students and researchers to browse high-end hardware, manage reservations through an interactive calendar, and provides administrators with a robust suite of tools for inventory control and maintenance tracking.
